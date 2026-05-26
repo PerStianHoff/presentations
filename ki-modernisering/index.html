@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KI i moderniseringsprosjekter – Sopra Steria</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/theme/white.css" />
+  <style>
+    :root {
+      --ss-purple:      #4d1d82;
+      --ss-dark-purple: #2A1449;
+      --ss-bg-purple:   #ede9f2;
+      --ss-bg-beige:    #fdf2e5;
+      --ss-warm-purple: #8b1d82;
+      --ss-orange:      #f07d00;
+      --ss-red:         #cf022b;
+      --ss-black:       #1d1d1b;
+      --ss-grey:        #a8a8a7;
+      --ss-light-grey:  #ededed;
+      --ss-gradient:    linear-gradient(to right, #4d1d82 0%, #8b1d82 10%, #cf022b 60%, #f07d00 100%);
+    }
+
+    .reveal { font-family: Tahoma, Arial, sans-serif; background: #fff; }
+    .reveal h1, .reveal h2, .reveal h3, .reveal h4 {
+      font-family: Tahoma, Arial, sans-serif;
+      font-weight: bold;
+      text-transform: none;
+      letter-spacing: -0.02em;
+      color: var(--ss-purple);
+    }
+
+    /* ── TITLE SLIDE ── */
+    .title-slide {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; height: 100%; position: relative; overflow: hidden;
+      background: var(--ss-dark-purple);
+    }
+    .title-slide::before {
+      content: ''; position: absolute; inset: 0;
+      background: var(--ss-gradient); opacity: 0.1;
+    }
+    .title-logo { width: 200px; margin-bottom: 2rem; position: relative; z-index: 1; filter: brightness(0) invert(1); }
+    .title-eyebrow {
+      color: var(--ss-orange); font-size: 0.75rem; font-weight: bold;
+      letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 0.5rem;
+      position: relative; z-index: 1;
+    }
+    .title-main {
+      font-size: 2.6rem !important; color: #fff !important;
+      line-height: 1.15 !important; margin: 0 0 0.3rem 0 !important;
+      position: relative; z-index: 1; text-align: center; max-width: 860px;
+    }
+    .title-accent {
+      background: var(--ss-gradient); -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .title-sub { font-size: 1rem; color: rgba(255,255,255,0.6); margin-top: 0.6rem; position: relative; z-index: 1; }
+    .title-presenters {
+      display: flex; gap: 2rem; margin-top: 1.8rem; position: relative; z-index: 1;
+    }
+    .title-presenter {
+      text-align: center; color: rgba(255,255,255,0.9);
+    }
+    .title-presenter strong { display: block; font-size: 0.9rem; color: #fff; }
+    .title-presenter span { font-size: 0.75rem; color: rgba(255,255,255,0.6); }
+    .title-divider { width: 1px; background: rgba(255,255,255,0.2); align-self: stretch; }
+
+    /* ── SECTION LABELS ── */
+    .section-label {
+      display: inline-block; background: var(--ss-orange); color: #fff;
+      font-size: 0.68rem; font-weight: bold; letter-spacing: 0.15em;
+      text-transform: uppercase; padding: 0.22em 0.7em;
+      border-radius: 2px; margin-bottom: 0.7rem;
+    }
+    .reveal h2.slide-title {
+      font-size: 1.9rem; color: var(--ss-purple);
+      margin-top: 0.1rem; margin-bottom: 0.2rem; line-height: 1.2;
+    }
+    .slide-subtitle {
+      font-size: 0.88rem; color: #666; margin-bottom: 1.2rem; font-weight: normal;
+    }
+
+    /* ── GRADIENT BAR ── */
+    .gradient-bar {
+      height: 4px; background: var(--ss-gradient); border-radius: 2px;
+      margin: 0.6rem 0 1rem 0;
+    }
+    .gradient-bar.narrow { width: 60px; }
+
+    /* ── CARDS ── */
+    .card-grid   { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.9rem; margin-top: 1rem; }
+    .card-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-top: 1rem; }
+    .card-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.8rem; margin-top: 1rem; }
+    .card-grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.8rem; margin-top: 1rem; }
+    .card {
+      background: #fafafa; border: 1px solid #e8e0f0;
+      border-left: 3px solid var(--ss-orange); border-radius: 6px;
+      padding: 0.9rem 0.85rem; text-align: left;
+    }
+    .card.purple-left { border-left-color: var(--ss-purple); }
+    .card.red-left    { border-left-color: var(--ss-red); }
+    .card-icon { font-size: 1.5rem; margin-bottom: 0.35rem; display: block; }
+    .card h4 { font-size: 0.85rem; color: var(--ss-purple); margin: 0 0 0.3rem 0; }
+    .card p  { font-size: 0.7rem; color: #444; margin: 0; line-height: 1.5; }
+    .card .card-tag {
+      display: inline-block; font-size: 0.6rem; font-weight: bold;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--ss-orange); margin-bottom: 0.25rem;
+    }
+
+    /* ── PERSON CARDS ── */
+    .person-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1rem; }
+    .person-card {
+      background: var(--ss-bg-purple); border-radius: 8px; padding: 1.3rem 1.2rem;
+      border-top: 3px solid var(--ss-purple);
+    }
+    .person-card h3 { font-size: 1.05rem; color: var(--ss-purple); margin: 0 0 0.15rem 0; }
+    .person-card .person-title { font-size: 0.72rem; color: var(--ss-orange); font-weight: bold; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.7rem; }
+    .person-card ul { margin: 0; padding: 0; list-style: none; }
+    .person-card li {
+      font-size: 0.7rem; color: #333; padding: 0.2rem 0 0.2rem 1rem;
+      position: relative; line-height: 1.4;
+    }
+    .person-card li::before { content: '›'; position: absolute; left: 0; color: var(--ss-orange); font-weight: bold; }
+
+    /* ── DAD CHEVRON ── */
+    .dad-row {
+      display: flex; align-items: stretch; margin: 1.2rem 0 0.5rem;
+      gap: 0;
+    }
+    .dad-step {
+      flex: 1; position: relative; padding: 1rem 1.5rem 1rem 2.5rem;
+      color: white; text-align: center;
+      clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 50%, calc(100% - 22px) 100%, 0 100%, 22px 50%);
+    }
+    .dad-step:first-child {
+      clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 50%, calc(100% - 22px) 100%, 0 100%);
+      padding-left: 1.5rem;
+    }
+    .dad-step.discover   { background: #5e2a9c; }
+    .dad-step.accelerate { background: #8b1d82; }
+    .dad-step.develop    { background: #2A1449; }
+    .dad-step-label { font-size: 1.2rem; font-weight: bold; display: block; }
+    .dad-step-time  { font-size: 0.65rem; opacity: 0.8; display: block; margin-top: 0.15rem; }
+    .dad-bullets { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0 1rem; margin-top: 0.8rem; }
+    .dad-bullets ul { margin: 0; padding: 0 0 0 1rem; font-size: 0.68rem; color: #333; line-height: 1.6; }
+    .dad-bullets ul li { margin-bottom: 0.15rem; }
+
+    /* ── SPLIT LAYOUT ── */
+    .split-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1rem; align-items: start; }
+    .split-panel { }
+    .split-panel h3 { font-size: 0.95rem; color: var(--ss-purple); margin-bottom: 0.6rem; }
+
+    /* ── CONTRAST SLIDE ── */
+    .contrast-slide { background: var(--ss-dark-purple) !important; }
+    .contrast-slide .section-label { background: var(--ss-orange); }
+    .contrast-slide .slide-title { color: #fff !important; }
+    .contrast-slide .slide-subtitle { color: rgba(255,255,255,0.7) !important; }
+    .contrast-slide .big-quote {
+      font-size: 1.6rem; color: #fff; line-height: 1.3;
+      border-left: 4px solid var(--ss-orange); padding-left: 1.2rem;
+      margin: 1.2rem 0;
+    }
+    .contrast-slide .sub-quote { font-size: 0.9rem; color: rgba(255,255,255,0.65); margin-top: 0.8rem; }
+
+    /* ── COMPARISON ── */
+    .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-top: 1rem; }
+    .compare-col {
+      border-radius: 8px; padding: 1.1rem 1rem;
+    }
+    .compare-col.bad  { background: #fff0f0; border: 1px solid #ffd0d0; border-top: 3px solid var(--ss-red); }
+    .compare-col.good { background: #f0f7f0; border: 1px solid #c0e0c0; border-top: 3px solid #2e7d32; }
+    .compare-col h3 { font-size: 0.88rem; margin-bottom: 0.7rem; }
+    .compare-col.bad h3  { color: var(--ss-red); }
+    .compare-col.good h3 { color: #2e7d32; }
+    .compare-col ul { padding-left: 1.1rem; margin: 0; }
+    .compare-col li { font-size: 0.7rem; color: #333; line-height: 1.5; margin-bottom: 0.2rem; }
+
+    /* ── STATS ── */
+    .stat-row { display: flex; gap: 1rem; margin-top: 1.2rem; justify-content: center; }
+    .stat-box {
+      flex: 1; background: var(--ss-bg-purple); border-radius: 8px;
+      padding: 1.1rem 0.8rem; text-align: center;
+    }
+    .stat-number { font-size: 2.4rem; font-weight: bold; color: var(--ss-purple); line-height: 1; }
+    .stat-unit   { font-size: 1.1rem; color: var(--ss-orange); font-weight: bold; }
+    .stat-label  { font-size: 0.68rem; color: #555; margin-top: 0.4rem; line-height: 1.3; }
+
+    /* ── SUCCESS ITEMS ── */
+    .success-list { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.5rem; }
+    .success-item {
+      display: flex; align-items: flex-start; gap: 0.8rem;
+      background: #fafafa; border-radius: 6px; padding: 0.7rem 0.9rem;
+      border-left: 3px solid var(--ss-purple);
+    }
+    .success-number {
+      min-width: 1.6rem; height: 1.6rem; background: var(--ss-purple); color: #fff;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: bold; flex-shrink: 0; margin-top: 0.05rem;
+    }
+    .success-text { font-size: 0.75rem; color: #333; line-height: 1.5; }
+    .success-text strong { color: var(--ss-purple); font-size: 0.8rem; display: block; margin-bottom: 0.1rem; }
+
+    /* ── AGENDA ── */
+    .agenda-list { margin-top: 1rem; display: flex; flex-direction: column; gap: 0.4rem; }
+    .agenda-item {
+      display: flex; align-items: center; gap: 0.8rem;
+      padding: 0.6rem 0.9rem; border-radius: 6px; background: #fafafa;
+      border: 1px solid #e8e0f0;
+    }
+    .agenda-time { font-size: 0.68rem; color: var(--ss-orange); font-weight: bold; min-width: 70px; }
+    .agenda-topic { font-size: 0.78rem; color: var(--ss-dark-purple); font-weight: bold; }
+    .agenda-who   { font-size: 0.65rem; color: #888; margin-left: auto; }
+
+    /* ── DISCOVERY EXAMPLE ── */
+    .finding-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.7rem; margin-top: 1rem; }
+    .finding-card {
+      background: #fafafa; border-radius: 6px; padding: 0.8rem;
+      border-top: 3px solid var(--ss-red);
+      font-size: 0.68rem; color: #333; line-height: 1.4;
+    }
+    .finding-card.medium { border-top-color: var(--ss-orange); }
+    .finding-card.good   { border-top-color: #2e7d32; }
+    .finding-card h4 { font-size: 0.75rem; color: var(--ss-dark-purple); margin-bottom: 0.3rem; }
+    .finding-badge {
+      display: inline-block; font-size: 0.58rem; font-weight: bold;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      padding: 0.1em 0.5em; border-radius: 3px; margin-bottom: 0.4rem;
+    }
+    .finding-badge.critical { background: rgba(207,2,43,0.12); color: var(--ss-red); }
+    .finding-badge.high     { background: rgba(240,125,0,0.12); color: var(--ss-orange); }
+    .finding-badge.info     { background: rgba(77,29,130,0.12); color: var(--ss-purple); }
+
+    /* ── CLOSING SLIDE ── */
+    .closing-dark {
+      background: var(--ss-dark-purple) !important;
+    }
+    .slide-logo {
+      position: absolute; bottom: 1.2rem; right: 1.5rem;
+      height: 28px; opacity: 0.9;
+    }
+
+    /* ── GENERAL ── */
+    .reveal .slides section { padding: 2rem 2.5rem 1.8rem; text-align: left; }
+    .reveal .slides section.title-section { padding: 0; }
+    ul.tight { padding-left: 1.2rem; margin: 0; }
+    ul.tight li { font-size: 0.74rem; color: #333; line-height: 1.5; margin-bottom: 0.25rem; }
+    .highlight-box {
+      background: var(--ss-bg-beige); border-left: 3px solid var(--ss-orange);
+      border-radius: 4px; padding: 0.7rem 0.9rem; margin-top: 0.8rem;
+      font-size: 0.76rem; color: #333; line-height: 1.5;
+    }
+    .tag {
+      display: inline-block; background: var(--ss-bg-purple); color: var(--ss-purple);
+      font-size: 0.62rem; font-weight: bold; text-transform: uppercase;
+      letter-spacing: 0.1em; padding: 0.15em 0.55em; border-radius: 3px;
+    }
+  </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+<!-- ─── SLIDE 1: TITLE ─── -->
+<section class="title-section" data-background-color="#2A1449">
+  <div class="title-slide">
+    <img class="title-logo" src="data:image/png;base64,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" alt="Sopra Steria" />
+    <div class="title-eyebrow">Frokostseminar · KI &amp; Modernisering</div>
+    <h1 class="title-main">
+      Hvordan lykkes med bruk av<br/>
+      <span class="title-accent">KI i moderniseringsprosjekter</span>
+    </h1>
+    <div class="gradient-bar narrow"></div>
+    <div class="title-sub">Erfaringer fra norske kunder</div>
+    <div class="title-presenters">
+      <div class="title-presenter">
+        <strong>Mathias Sundby</strong>
+        <span>Project Manager, Sopra Steria</span>
+      </div>
+      <div class="title-divider"></div>
+      <div class="title-presenter">
+        <strong>Per Stian Hoff</strong>
+        <span>Forretningsutvikler KI, Sopra Steria</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SLIDE 2: OM OSS ─── -->
+<section data-background-color="#ffffff">
+  <span class="section-label">Foredragsholdere</span>
+  <h2 class="slide-title">Om oss</h2>
+  <div class="gradient-bar narrow"></div>
+  <div class="person-grid">
+    <div class="person-card">
+      <h3>Mathias Sundby</h3>
+      <div class="person-title">Project Manager &amp; Leveranseleder</div>
+      <ul>
+        <li>Manager med bred erfaring innen teknisk og smidig prosjektledelse</li>
+        <li>Forretningsutvikler for Porteføljeledelse og IT Governance i Sopra Steria</li>
+        <li>Ledet tverrfaglige team for bl.a. Torghatten, Redd Barna og Den norske kirke</li>
+        <li>Særlig fokus på Azure-baserte plattformer og moderniseringsprosjekter</li>
+        <li>Erfaring med KI-støttet prosjektledelse og endringsarbeid</li>
+      </ul>
+    </div>
+    <div class="person-card">
+      <h3>Per Stian Hoff</h3>
+      <div class="person-title">Forretningsutvikler innen KI – Programvareutvikling</div>
+      <ul>
+        <li>Jobber i skjæringspunktet mellom teknologi, forretning og moderne programvareutvikling</li>
+        <li>Bakgrunn som fullstack-utvikler og tech lead, bred DevOps-erfaring</li>
+        <li>Sentral drivkraft for generativ KI i utviklingsprosjekter de siste årene</li>
+        <li>Erfaring med modernisering, arkitektur, kodeanalyse og testautomatisering med KI</li>
+        <li>Utviklet interne retningslinjer for trygg bruk av Copilot og tilsvarende verktøy</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SLIDE 3: AGENDA ─── -->
+<section data-background-color="#ffffff">
+  <span class="section-label">Agenda</span>
+  <h2 class="slide-title">45 minutter om det som faktisk fungerer</h2>
+  <div class="gradient-bar narrow"></div>
+  <div class="agenda-list">
+    <div class="agenda-item">
+      <div class="agenda-time">10.00</div>
+      <div class="agenda-topic">Hvorfor: Legacy-utfordringen og KI som gamechanger</div>
+      <div class="agenda-who">Mathias</div>
+    </div>
+    <div class="agenda-item">
+      <div class="agenda-time">10.10</div>
+      <div class="agenda-topic">Hva vi ser: Typiske pains og fallgruver hos norske virksomheter</div>
+      <div class="agenda-who">Mathias</div>
+    </div>
+    <div class="agenda-item">
+      <div class="agenda-time">10.20</div>
+      <div class="agenda-topic">Verdien KI har levert hos tre av våre kunder</div>
+      <div class="agenda-who">Mathias</div>
+    </div>
+    <div class="agenda-item">
+      <div class="agenda-time">10.30</div>
+      <div class="agenda-topic">Vår metodikk: Discover → Accelerate → Develop og AI Harness</div>
+      <div class="agenda-who">Per Stian</div>
+    </div>
+    <div class="agenda-item">
+      <div class="agenda-time">10.40</div>
+      <div class="agenda-topic">Hvordan komme i gang?</div>
+      <div class="agenda-who">Begge</div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SLIDE 4: NORSK VIRKELIGHET ─── -->
+<section data-background-color="#ffffff">
+  <span class="section-label">Bakgrunn</span>
+  <h2 class="slide-title">Norske virksomheter sitter på kritiske systemer bygget for en annen tid</h2>
+  <div class="gradient-bar narrow"></div>
+  <div class="card-grid-4" style="margin-top:1.2rem;">
+    <div class="card">
+      <span class="card-icon">💸</span>
+      <h4>60–80 %</h4>
+      <p>av IT-budsjettet går til vedlikehold og drift av eksisterende systemer – ikke nyutvikling</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">🔒</span>
+      <h4>EOL overalt</h4>
+      <p>Mange kritiske systemer kjører på teknologi som ikke lenger mottar sikkerhetsoppdateringer</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">🧠</span>
+      <h4>Kunnskapen forsvinner</h4>
+      <p>Systemet lever i hodet på 1–2 nøkkelpersoner. Når de slutter, slutter også mulighetene</p>
+    </div>
+    <div class="card">
+      <span class="card-icon">🐢</span>
+      <h4>Endringstakt</h4>
+      <p>Det som burde ta dager, tar måneder. Virksomheten kan ikke holde tritt med markedet</p>
+    </div>
+  </div>
+  <div class="highlight-box" style="margin-top:1rem;">
+    Resultatet: <strong>teknologigjeld som vokser for hvert år som går</strong> – og en kompetanseutfordring som ikke løser seg selv.
+  </div>
+</section>
+
+<!-- ─── SLIDE 5: KI ER EN GAMECHANGER ─── -->
+<section data-background-color="#ffffff">
+  <span class="section-label">Mulighetsrom</span>
+  <h2 class="slide-title">KI gjør det som tidligere tok måneder mulig på uker</h2>
+  <div class="gradient-bar narrow"></div>
+  <div class="card-grid-4" style="margin-top:1.1rem;">
+    <div class="card purple-left">
+      <span class="card-icon">🔍</span>
+      <h4>Kartlegging</h4>
+      <p>Automatisk analyse av hundretusener av kodelinjer – avdekker risiko og avhengigheter på timer, ikke måneder</p>
+    </div>
+    <div class="card purple-left">
+      <span class="card-icon">📄</span>
+      <h4>Dokumentasjon</h4>
+      <p>KI genererer teknisk dokumentasjon, forretningsregler og arkitekturoversikt fra eksisterende kode</p>
+    </div>
+    <div class="card purple-left">
+      <span class="card-icon">⚙️</span>
+      <h4>Kodekonvertering</h4>
+      <p>Migrering mellom teknologier med KI-assistanse – fra COBOL til Java, EJB til moderne Spring, BizTalk til Azure</p>
+    </div>
+    <div class="card purple-left">
+      <span class="card-icon">🧪</span>
+      <h4>Testgenerering</h4>
+      <p>Automatisk generering av testsuiter fra gammel kode – og verifisering av at ny kode reproduserer samme atferd</p>
+    </div>
+  </div>
+  <div class="highlight-box">
+    KI har fjernet den viktigste barrieren mot modernisering: <strong>frykt for det ukjente.</strong>
+    Med god kartlegging vet du nøyaktig hva du har – og hva det koster å endre det.
+  </div>
+</section>
+
+<!-- ─── SLIDE 6: ADVARSEL ─── -->
+<section class="contrast-slide" data-background-color="#2A1449">
+  <span class="section-label">Viktig</span>
+  <h2 class="slide-title" style="color:#fff!important;">Men – du kan ikke bare koble på KI og forvente at det moderniserer seg selv</h2>
+  <div class="gradient-bar narrow"></div>
+  <div class="big-quote">
+    "Vi kjøpte Copilot-lisenser til hele teamet. Seks måneder senere hadde vi ikke modernisert en eneste modul."
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1.2rem;">
+    <div style="background:rgba(255,255,255,0.07);border-radius:8px;padding:1rem;border-left:3px solid var(--ss-orange);">
+      <h4 style="color:var(--ss-orange);font-size:0.85rem;margin-bottom:0.5rem;">Hva som IKKE fungerer</h4>
+      <ul style="list-style:none;padding:0;margin:0;">
+        <li style="font-size:0.72rem;color:rgba(255,255,255,0.75);padding:0.2rem 0 0.2rem 1rem;position:relative;">
+          <span style="position:absolute;left:0;color:var(--ss-red);">✗</span> Gi verktøy uten strategi
+        </li>
+        <li style="font-size:0.72rem;color:rgba(255,255,255,0.75);padding:0.2rem 0 0.2rem 1rem;position:relative;">
+          <span style="position:absolute;left:0;color:var(--ss-red);">✗</span> Forvente at KI "forstår" systemet alene
+        </li>
+        <li style="font-size:0.72rem;color:rgba(255,255,255,0.75);padding:0.2rem 0 0.2rem 1rem;position:relative;">
+          <span style="position:absolute;left:0;color:var(--ss-red);">✗</span> Modernisere uten kartlegging og rammer
+        </li>
+        <li style="font-size:0.72rem;color:rgba(255,255,255,0.75);padding:0.2rem 0 0.2rem 1rem;position:relative;">
+          <span style="position:absolute;left:0;color:var(--ss-red);">✗</span> Ignorere sikkerhets- og styringsaspekter
+        </li>
+      </ul>
+    </div>
+    <div style="background:rgba(255,255,255,0.07);border-radius:8px;padding:1rem;border-left:3px solid #2ecc71;">
+      <h4 style="color:#2ecc71;font-size:0.85rem;margin-bottom:0.5rem;">Hva som FUNGERER</h4>
+      <ul style="list-style:none;padding:0;margin:0;">
+        <li style="font-size:0.72rem;color:rgba(255,255,255,0.75);padding:0.2rem 0 0.2rem 1rem;position:relative;">
+          <span style="position:absolute;left:0;color:#2ecc71;">✓</span> Strukturert discovery før man begynner
+        </li>
+        <li style="font-size:0.72rem;color:rgba(255,255,255,0.75);padding:0.2rem 0 0.2rem 1rem;position:relative;">
+          <span style="position:absolute;left:0;color:#2ecc71;">✓</span> KI tilpasset ditt system og din kontekst
+        </li>
+        <li style="font-size:0.72rem;color:rgba(255,255,255,0.75);padding:0.2rem 0 0.2rem 1rem;position:relative;">
+          <span style="position:absolute;left:0;color:#2ecc71;">✓</span> Guardrails og styring fra dag én
+        </li>
+        <li style="font-size:0.72rem;color:rgba(255,255,255,0.75);padding:0.2rem 0 0.2rem 1rem;position:relative;">
+          <span style="position:absolute;left:0;color:#2ecc71;">✓</span> Dedikert enablement-team med riktig kompetanse
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SLIDE 7: PAINS ─── -->
+<section data-background-color="#ffffff">
+  <span class="section-label">Kundeinnsikt</span>
+  <h2 class="slide-title">Pains vi ser igjen og igjen hos norske virksomheter</h2>
+  <div class="gradient-bar narrow"></div>
+  <div class="card-grid" style="margin-top:0.9rem;">
+    <div class="card red-left">
+      <span class="card-icon">📚</span>
+      <h4>Ingen dokumentasjon</h4>
+      <p>Systemet er aldri dokumentert. All kunnskap lever i hodet på utviklerne – og det er én person igjen.</p>
+    </div>
+    <div class="card red-left">
+      <span class="card-icon">⚠️</span>
+      <h4>Endringsangst</h4>
+      <p>"Vi tør ikke røre det" – systemet er så sammenvevd at selv små endringer kan knekke kritiske prosesser.</p>
+    </div>
+    <div class="card red-left">
+      <span class="card-icon">🔧</span>
+      <h4>Teknologigjeld</h4>
+      <p>EOL-rammeverk, avviklet teknologi, ingen sikkerhetsoppdateringer. Hver dag øker risikoen.</p>
+    </div>
+    <div class="card red-left">
+      <span class="card-icon">👥</span>
+      <h4>Rekrutteringsproblem</h4>
+      <p>Ingen ønsker å jobbe med 20 år gammel teknologi. Kompetansegapet vokser raskere enn det kan fylles.</p>
+    </div>
+    <div class="card red-left">
+      <span class="card-icon">🤖</span>
+      <h4>KI uten retning</h4>
+      <p>Verktøy er kjøpt inn og lisenser distribuert – men ingen har definert hva KI faktisk skal bidra med.</p>
+    </div>
+    <div class="card red-left">
+      <span class="card-icon">🔗</span>
+      <h4>Skjulte avhengigheter</h4>
+      <p>Integrasjoner og forretningsregler gjemt i kode som ingen forstår. Modernisering stoppes av det ukjente.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SLIDE 8: TRE CASER ─── -->
+<section data-background-color="#ffffff">
+  <span class="section-label">Erfaringer fra praksis</span>
+  <h2 class="slide-title">Tre norske virksomheter – tre moderniseringsreiser</h2>
+  <div class="gradient-bar narrow"></div>
+  <div class="card-grid" style="margin-top:0.9rem;">
+    <div class="card" style="border-top:3px solid var(--ss-purple);border-left:none;">
+      <div class="card-tag">Norsk transportaktør</div>
+      <h4>Fra BizTalk til Azure Integration</h4>
+      <p style="margin-bottom:0.5rem;"><strong style="color:#333;">Utfordring:</strong> Kritisk integrasjonsplattform fra BizTalk-generasjonen. Hundrevis av integrasjoner, minimal dokumentasjon, én nøkkelperson.</p>
+      <p><strong style="color:#2e7d32;">Resultat:</strong> KI-kartlegging identifiserte alle avhengigheter på 3 uker. Migrering gjennomført uten driftsavbrudd.</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--ss-purple);border-left:none;">
+      <div class="card-tag">Norsk offentlig etat</div>
+      <h4>Mission-critical fagsystem – 20+ år</h4>
+      <p style="margin-bottom:0.5rem;"><strong style="color:#333;">Utfordring:</strong> Kritisk fagsystem bygget på EOL-teknologi, sensitiv data uten tilstrekkelig sikring, endringsfrykt hos hele organisasjonen.</p>
+      <p><strong style="color:#2e7d32;">Resultat:</strong> Strangler fig-modernisering med KI-generert testsuite som sikkerhetsnett. 40 % raskere leveransesyklus.</p>
+    </div>
+    <div class="card" style="border-top:3px solid var(--ss-purple);border-left:none;">
+      <div class="card-tag">Norsk handelsvirksomhet</div>
+      <h4>Distribusjonskritisk legacy-applikasjon</h4>
+      <p style="margin-bottom:0.5rem;"><strong style="color:#333;">Utfordring:</strong> Forretningsregler spredt over 15 år med kode, ingen testdekning, KI-prosjekt startet uten strategi og stoppet etter 3 måneder.</p>
+      <p><strong style="color:#2e7d32;">Resultat:</strong> Ny start med strukturert tilnærming. Discovery avdekket 200+ udokumenterte forretningsregler. Nå i Accelerate-fase.</p>
+    </div>
+  </div>
+  <div class="highlight-box">
+    <strong>Felles mønster:</strong> Virksomhetene som lyktes, startet med grundig kartlegging – ikke med verktøy.
+  </div>
+</section>
+
+<!-- ─── SLIDE 9: DAD TILNÆRMING ─── -->
+<section data-background-color="#ffffff">
+  <span class="section-label">Metodikk</span>
+  <h2 class="slide-title">Sopra Sterias tilnærming: Discover → Accelerate → Develop</h2>
+  <div class="gradient-bar narrow"></div>
+  <div class="dad-row">
+    <div class="dad-step discover">
+      <span class="dad-step-label">Discover</span>
+      <span class="dad-step-time">4–6 uker</span>
+    </div>
+    <div class="dad-step accelerate">
+      <span class="dad-step-label">Accelerate</span>
+      <span class="dad-step-time">2–5 måneder</span>
+    </div>
+    <div class="dad-step develop">
+      <span class="dad-step-label">Develop</span>
+      <span class="dad-step-time">Løpende</span>
+    </div>
+  </div>
+  <div class="dad-bullets">
+    <ul>
+      <li>KI-drevet kodeanalyse og kartlegging</li>
+      <li>Risikoregister og prioritert backlog</li>
+      <li>AS-IS arkitektur og forretningsregler</li>
+      <li>Beslutningsgrunnlag og målbilde</li>
+      <li>Guardrails og AI Harness definisjon</li>
+    </ul>
+    <ul>
+      <li>MVP og proof-of-value leveranser</li>
+      <li>DevOps pipelines og testdekning</li>
+      <li>KI-støttet kodekonvertering</li>
+      <li>Arkitektur- og designrådgivning</li>
+      <li>Enablement av utviklingsteamet</li>
+    </ul>
+    <ul>
+      <li>Smidig videreutvikling med KI</li>
+      <li>Kontinuerlig forvaltning</li>
+      <li>Arkitektur- og KI-rådgivning løpende</li>
+      <li>Kompetanseutvikling i organisasjonen</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ─── SLIDE 10: DISCOVER ─── -->
+<section data-background-color="#ffffff">
+  <span class="section-label">Discover-fasen</span>
+  <h2 class="slide-title">Forstå systemet – med KI som lupe</h2>
+  <div class="gradient-bar narrow"></div>
+  <div class="split-2">
+    <div class="split-panel">
+      <h3>Hva vi gjør i Discover</h3>
+      <ul class="tight">
+        <li>Automatisk analyse av hele kodebasen – uavhengig av størrelse</li>
+        <li>Kartlegging av alle integrasjoner, datamodeller og avhengigheter</li>
+        <li>Identifisering av forretningsregler gjemt i koden</li>
+        <li>Risikoregister med prioritering og anbefalt fremgangsmåte</li>
+        <li>Intervjuer med nøkkelpersoner – supplert med KI-analyse</li>
+        <li>Beslutningsgrunnlag: retain, migrate, rearchitect eller rebuild</li>
+      </ul>
+      <div class="highlight-box" style="margin-top:0.8rem;">
+        Resultatet er en <strong>Discovery-rapport</strong> som gir hele organisasjonen – teknisk og ledelse – et felles bilde av situasjonen.
+      </div>
+    </div>
+    <div class="split-panel">
+      <h3>Hva KI bidrar med</h3>
+      <div class="card" style="margin-bottom:0.6rem;">
+        <h4>🔍 Kodeforståelse i dybden</h4>
+        <p>KI leser og forstår 100.000+ kodelinjer – avdekker mønstre og anti-mønstre ingen mennesker ville funnet manuelt</p>
+      </div>
+      <div class="card">
+        <h4>📐 Arkitekturkartlegging</h4>
+        <p>Automatisk visualisering av systemstruktur, datatransporter og integrasjonsflyt fra eksisterende kode</p>
+      </div>
+      <div class="card" style="margin-top:0.6rem;">
+        <h4>⚖️ Risikovurdering</h4>
+        <p>Systematisk gjennomgang av kjente CVE-er, EOL-komponenter og compliance-avvik med anbefalt prioritering</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SLIDE 11: DISCOVERY EKSEMPEL ─── -->
+<section data-background-color="#ffffff">
+  <span class="section-label">Konkret eksempel</span>
+  <h2 class="slide-title">Hva en discovery-rapport avdekker – eksempel fra norsk virksomhet</h2>
+  <div class="gradient-bar narrow"></div>
+  <div class="finding-row">
+    <div class="finding-card">
+      <span class="finding-badge critical">Kritisk</span>
+      <h4>EOL-teknologi uten oppgraderingsvei</h4>
+      Kjernerammeverk som har vært avviklet i 15+ år. Ingen oppgradering mulig – kun fullmodernisering løser dette.
+    </div>
+    <div class="finding-card">
+      <span class="finding-badge critical">Kritisk</span>
+      <h4>Sensitiv persondata uten kryptering</h4>
+      Personnumre og finansdata lagret i klartekst i databasen. Brudd på GDPR og interne retningslinjer.
+    </div>
+    <div class="finding-card medium">
+      <span class="finding-badge high">Høy</span>
+      <h4>Null testdekning</h4>
+      Ingen automatiserte tester i hele kodebasen. Endringer kan ikke verifiseres uten manuell testing av alle flyter.
+    </div>
+    <div class="finding-card medium">
+      <span class="finding-badge high">Høy</span>
+      <h4>Kunnskapskonsentrasjon</h4>
+      Kritisk systemkunnskap hos 1–2 utviklere. Ved avgang stoppes enhver videreutvikling.
+    </div>
+  </div>
+  <div class="highlight-box" style="margin-top:0.8rem;">
+    <strong>Anbefaling fra rapporten:</strong> Fullmodernisering med Strangler Fig-mønster – bygg ny funksjonalitet rundt det eksisterende systemet og migrer inkrementelt for å minimere driftsavbrudd.
+    <br/><span style="font-size:0.68rem;color:#888;margin-top:0.3rem;display:block;">Rapporten ble levert på 4 uker av et nearshore-team ved hjelp av KI-assistert analyse</span>
+  </div>
+</section>
+
+<!-- ─── SLIDE 12: GUARDRAILS ─── -->
+<section data-background-color="#ffffff">
+  <span class="section-label">Styring</span>
+  <h2 class="slide-title">Guardrails: Rammene som gjør KI trygt og effektivt</h2>
+  <div class="gradient-bar narrow"></div>
+  <div class="card-grid" style="margin-top:0.9rem;">
+    <div class="card purple-left">
+      <span class="card-icon">🛡️</span>
+      <h4>Datasikkerhet og personvern</h4>
+      <p>Klare regler for hvilken kode og data som kan sendes til KI-verktøy. Sikrer GDPR-compliance og vern av forretningshemmeligheter.</p>
+    </div>
+    <div class="card purple-left">
+      <span class="card-icon">✅</span>
+      <h4>Godkjente verktøy og modeller</h4>
+      <p>Hviteliste over hvilke KI-verktøy som er clearert for bruk i organisasjonen – og hva de kan brukes til.</p>
+    </div>
+    <div class="card purple-left">
+      <span class="card-icon">🎓</span>
+      <h4>Kompetanse og opplæring</h4>
+      <p>Alle som bruker KI i moderniseringsarbeidet, skal forstå begrensningene. KI-generert kode må alltid valideres.</p>
+    </div>
+    <div class="card purple-left">
+      <span class="card-icon">📋</span>
+      <h4>Ansvar og sporbarhet</h4>
+      <p>Tydelig definert hvem som er ansvarlig for KI-genererte leveranser og hvordan de godkjennes.</p>
+    </div>
+    <div class="card purple-left">
+      <span class="card-icon">🔄</span>
+      <h4>Kvalitetssikring</h4>
+      <p>Kodegjennomgang og testing-krav som gjelder KI-generert kode på lik linje med menneskeskrevet kode.</p>
+    </div>
+    <div class="card purple-left">
+      <span class="card-icon">🧭</span>
+      <h4>Etiske retningslinjer</h4>
+      <p>Retningslinjer for bruk av KI som respekterer selskapets verdier, relevante lovkrav og bransjenormer.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SLIDE 13: AI HARNESS ─── -->
+<section data-background-color="#ffffff">
+  <span class="section-label">AI Harness</span>
+  <h2 class="slide-title">AI Harness: KI tilpasset din virksomhet, ditt system og din kontekst</h2>
+  <div class="gradient-bar narrow"></div>
+  <div class="split-2" style="margin-top:1rem;">
+    <div class="split-panel">
+      <h3>Hva er et AI Harness?</h3>
+      <p style="font-size:0.74rem;color:#333;line-height:1.6;margin-bottom:0.8rem;">
+        Et AI Harness er ikke et hyllevareprodukt – det er en <strong>skreddersydd KI-infrastruktur</strong>
+        som konfigurerer, kobler og tilpasser KI-verktøy til din organisasjons systemer, prosesser og kompetanse.
+      </p>
+      <ul class="tight">
+        <li>KI-agenter med forståelse for ditt spesifikke system og domene</li>
+        <li>Integrasjon med eksisterende DevOps-verktøy og pipelines</li>
+        <li>Prompt-biblioteker og templates tilpasset dine teknologier</li>
+        <li>Automatiserte analysepipelines for kode, dokumentasjon og testing</li>
+        <li>Tilgangsstyring og logging i tråd med guardrails</li>
+      </ul>
+    </div>
+    <div class="split-panel">
+      <h3>Eksempler fra praksis</h3>
+      <div class="card" style="margin-bottom:0.6rem;">
+        <h4>🤖 Kodeanalyse-agent</h4>
+        <p>Trent på din kodebase – forstår arkitektur, konvensjoner og domenelogikk. Ikke en generisk chatbot.</p>
+      </div>
+      <div class="card" style="margin-bottom:0.6rem;">
+        <h4>🔄 Migreringsassistent</h4>
+        <p>Konverterer kode fra gammel til ny teknologi med kontekst fra hele kodebasen – ikke bare én fil om gangen.</p>
+      </div>
+      <div class="card">
+        <h4>📝 Dokumentasjonsgenerator</h4>
+        <p>Produserer og vedlikeholder teknisk dokumentasjon automatisk ved kodeendringer.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SLIDE 14: RESULTATER ─── -->
+<section data-background-color="#ffffff">
+  <span class="section-label">Resultater i praksis</span>
+  <h2 class="slide-title">Hva strukturert KI-modernisering faktisk leverer</h2>
+  <div class="gradient-bar narrow"></div>
+  <div class="stat-row" style="margin-top:1rem;">
+    <div class="stat-box">
+      <div class="stat-number">4<span class="stat-unit">–6</span></div>
+      <div class="stat-label">uker fra start til komplett<br/>risiko- og arkitekturbilde</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-number">60<span class="stat-unit">%+</span></div>
+      <div class="stat-label">raskere initial analyse<br/>sammenlignet med manuell kartlegging</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-number">200<span class="stat-unit">+</span></div>
+      <div class="stat-label">udokumenterte forretningsregler<br/>avdekket i typisk discovery</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-number">0</div>
+      <div class="stat-label">driftsavbrudd ved riktig gjennomført<br/>Strangler Fig-modernisering</div>
+    </div>
+  </div>
+  <div class="card-grid-2" style="margin-top:1rem;">
+    <div class="card purple-left">
+      <h4>Økt endringstakt</h4>
+      <p>Virksomheter som fullfører modernisering med riktig tilnærming, rapporterer dramatisk raskere leveransesyklus og lavere risiko ved hver endring.</p>
+    </div>
+    <div class="card purple-left">
+      <h4>Lavere kompleksitet</h4>
+      <p>Moderne arkitektur, god testdekning og oppdatert dokumentasjon gjør det mulig å onboarde nye utviklere og endre systemet trygt.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SLIDE 15: SUKSESSFAKTORER ─── -->
+<section data-background-color="#ffffff">
+  <span class="section-label">Suksessfaktorer</span>
+  <h2 class="slide-title">Fem ting som skiller de som lykkes fra de som ikke gjør det</h2>
+  <div class="gradient-bar narrow"></div>
+  <div class="success-list" style="margin-top:1rem;">
+    <div class="success-item">
+      <div class="success-number">1</div>
+      <div class="success-text">
+        <strong>Start med discovery – alltid</strong>
+        Du kan ikke modernisere det du ikke forstår. Invester 4–6 uker i kartlegging før du skriver en linje ny kode.
+      </div>
+    </div>
+    <div class="success-item">
+      <div class="success-number">2</div>
+      <div class="success-text">
+        <strong>KI krever kontekst – gi den det</strong>
+        Generiske KI-verktøy uten tilpasning gir generiske resultater. Et AI Harness tilpasset ditt system er forskjellen.
+      </div>
+    </div>
+    <div class="success-item">
+      <div class="success-number">3</div>
+      <div class="success-text">
+        <strong>Guardrails muliggjør fart – de bremser den ikke</strong>
+        Tydelige rammer for KI-bruk gjør at teamet kan bevege seg raskt og trygt, uten å stoppe opp ved hvert usikkerhetsmoment.
+      </div>
+    </div>
+    <div class="success-item">
+      <div class="success-number">4</div>
+      <div class="success-text">
+        <strong>Dedikert enablement-team med riktig kompetanse</strong>
+        Modernisering trenger et team som kombinerer domeneforståelse, moderne arkitektur og erfaring med KI – ikke bare verktøytilgang.
+      </div>
+    </div>
+    <div class="success-item">
+      <div class="success-number">5</div>
+      <div class="success-text">
+        <strong>Inkrementell levering, ikke big bang</strong>
+        Strangler Fig-mønsteret – moderniser bit for bit mens systemet kjører – er konsekvent mer vellykket enn full ombygging på én gang.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── SLIDE 16: CLOSING ─── -->
+<section class="closing-dark" data-background-color="#2A1449">
+  <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;position:relative;">
+    <img src="data:image/png;base64,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" alt="Sopra Steria" style="width:180px;margin-bottom:1.5rem;filter:brightness(0) invert(1);" />
+    <div style="font-size:0.8rem;color:var(--ss-orange);font-weight:bold;letter-spacing:0.2em;text-transform:uppercase;margin-bottom:0.8rem;">Spørsmål? La oss snakke!</div>
+    <h2 style="color:#fff !important;font-size:2rem;margin-bottom:0.3rem;">Takk for oss</h2>
+    <div style="height:3px;width:80px;background:var(--ss-gradient);border-radius:2px;margin:0.8rem auto;"></div>
+    <div style="display:flex;gap:3rem;margin-top:1.5rem;">
+      <div style="text-align:center;">
+        <div style="color:#fff;font-weight:bold;font-size:0.9rem;">Mathias Sundby</div>
+        <div style="color:rgba(255,255,255,0.6);font-size:0.72rem;margin-top:0.2rem;">mathias.sundby@soprasteria.com</div>
+      </div>
+      <div style="width:1px;background:rgba(255,255,255,0.2);"></div>
+      <div style="text-align:center;">
+        <div style="color:#fff;font-weight:bold;font-size:0.9rem;">Per Stian Hoff</div>
+        <div style="color:rgba(255,255,255,0.6);font-size:0.72rem;margin-top:0.2rem;">per.stian.hoff@soprasteria.com</div>
+      </div>
+    </div>
+    <div style="position:absolute;bottom:1rem;font-size:0.65rem;color:rgba(255,255,255,0.3);">The world is how we shape it.</div>
+  </div>
+</section>
+
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    transition: 'slide',
+    transitionSpeed: 'fast',
+    backgroundTransition: 'fade',
+    controls: true,
+    progress: true,
+    center: false,
+    width: 1200,
+    height: 675,
+    margin: 0,
+    plugins: []
+  });
+</script>
+</body>
+</html>
