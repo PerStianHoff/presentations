@@ -578,28 +578,43 @@
   </div>
 </section>
 
-<!-- ═══ SLIDE 17: TRE PRINSIPPER ═══ -->
-<!-- ═══ HVA BETYR DETTE FOR DERE ═══ -->
+<!-- ═══ BOEING 737 MAX – FOKUS PÅ FART ═══ -->
 <section data-background-color="#ffffff">
-  <div class="section-label">Hva er neste</div>
-  <h2 class="slide-title">Agenter flytter inn i drift</h2>
-  <p style="font-size:0.72rem; color:#666; margin:0.2rem 0 0.2rem 0;">Med isolasjon og pipeline-guardrails på plass tør vi la agenter handle autonomt – ikke bare skrive kode, men overvåke, vurdere og foreslå tiltak i produksjon.</p>
-  <div class="card-grid" style="grid-template-columns:1fr 1fr; gap:0.9rem; margin-top:0.8rem;">
-    <div class="card">
-      <span class="card-icon">🚨</span>
-      <h4>Autonom incident response</h4>
-      <p>En alarm i Azure (&gt;5 feil på 5 minutter) ringer meg – og vekker samtidig en AI-agent som leser loggene, finner rotårsaken og foreslår en fix. Samme mønster som debug-demoen, men startet av produksjon selv.</p>
-    </div>
-    <div class="card">
-      <span class="card-icon">🔄</span>
-      <h4>AI-forvaltningsrigg / autopatching</h4>
-      <p>Vår løsning trigger AI-agenter til å sjekke tredjepartsbiblioteker. Når SCA-scannet finner noe, vurderer AI om man bør oppgradere eller nedgradere – og oppretter automatisk et issue og en PR.</p>
-    </div>
+  <div class="section-label">Refleksjon</div>
+  <h2 class="slide-title">Fokus på fart gir risiko i seg selv</h2>
+  <p style="font-size:0.78rem; color:#666; margin:0.3rem 0 0.2rem 0;">Boeing 737 MAX-ulykkene – <strong>Lion Air Flight 610</strong> og <strong>Ethiopian Airlines Flight 302</strong></p>
+  <div class="stat-grid">
+    <div class="stat-box"><div class="stat-num">346</div><div class="stat-label">døde i de to ulykkene</div></div>
+    <div class="stat-box"><div class="stat-num">20 mnd</div><div class="stat-label">hele flåten ute av drift</div></div>
+    <div class="stat-box"><div class="stat-num">Milliarder</div><div class="stat-label">i kostnader</div></div>
   </div>
-  <div style="background:var(--ss-bg-purple); border-radius:8px; padding:0.8rem 1.2rem; margin-top:0.9rem;">
-    <p style="font-size:0.75rem; color:var(--ss-dark-purple); margin:0; line-height:1.5; text-align:center;"><strong>Fellesnevneren: agenten foreslår – pipeline og mennesket godkjenner.</strong> Autonomi uten å gi slipp på kontrollen.</p>
+  <div class="problem-box">
+    <p style="margin:0; font-size:0.78rem; line-height:1.55; color:#333;"><strong>Årsak:</strong> Et nytt system (MCAS) skulle kompensere for flyets tendens til å tippe oppover som følge av nye og større motorer. Systemet var feilkonstruert, og pilotene var i liten grad informert om det – resultatet var at det presset flyet nedover i stedet.</p>
   </div>
 </section>
+
+<section data-background-color="#ffffff">
+  <div class="section-label">Refleksjon</div>
+  <h2 class="slide-title">Hvordan kunne dette skje?</h2>
+  <div class="split-layout">
+    <div>
+      <div class="bullet"><div class="bullet-dot"></div><span>Manglende redundans og sikkerhetsmarginer</span></div>
+      <div class="bullet"><div class="bullet-dot"></div><span>Manglende opplæring av pilotene</span></div>
+      <div class="bullet"><div class="bullet-dot"></div><span>Fokus på rask godkjenning av flyet for å konkurrere mot Airbus</span></div>
+      <div class="bullet"><div class="bullet-dot"></div><span>Kontrollorgan stolte på Boeing sine egne vurderinger</span></div>
+      <div class="bullet"><div class="bullet-dot"></div><span>Boeing nedtonet og skjulte viktige detaljer om MCAS</span></div>
+    </div>
+    <div>
+      <div class="highlight-box">
+        <p style="margin:0; font-size:0.78rem; line-height:1.55; color:#333;">Som ingeniører er vi ansvarlige for å lage sikre løsninger – også når vi går inn i en tid hvor forventningene til fart blir enda høyere.</p>
+      </div>
+      <div style="background:var(--ss-gradient); border-radius:10px; padding:1.1rem 1.2rem; margin-top:0.9rem; text-align:center;">
+        <p style="margin:0; font-size:1.05rem; font-weight:bold; color:#fff; line-height:1.4;">Security Champions er viktigere enn noen gang!</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 
 <!-- ═══ NY: AGENTER I DRIFT ═══ -->
 <section data-background-color="#ffffff">
@@ -645,6 +660,7 @@
     <div class="title-tagline" style="color:rgba(255,255,255,0.4);">The world is how we shape it.</div>
   </div>
 </section>
+
 
 </div></div>
 
