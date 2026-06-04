@@ -1,0 +1,8 @@
+# Video assets (too large for GitHub; kept locally / in SharePoint)
+*.mov
+*.mp4
+*.m4v
+*.webm
+
+# macOS
+.DS_Store
