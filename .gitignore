@@ -4,6 +4,11 @@
 *.m4v
 *.webm
 
+# Feedback data (contains personal data – names/emails; kept local only)
+*.xlsx
+*.xls
+*.xlsm
+
 # macOS
 .DS_Store
 
