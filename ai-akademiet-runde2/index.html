@@ -338,16 +338,17 @@
     .r2-tag { display:inline-block; margin-top:0.5rem; background:#fff; color:var(--ss-purple); border:1px solid #d9cce8;
               font-size:0.55rem; font-weight:bold; letter-spacing:0.08em; text-transform:uppercase; padding:0.1em 0.5em; border-radius:20px; }
     .r2-arrow { display:flex; align-items:center; color:var(--ss-orange); font-size:1.6rem; }
-    .r2-split { flex:2.1; display:flex; flex-direction:column; gap:0.6rem; }
+    .r2-split { flex:2.1; display:flex; flex-direction:column; gap:0.45rem; }
     .r2-split-label { font-size:0.6rem; font-weight:bold; letter-spacing:0.12em; text-transform:uppercase;
                       color:var(--ss-orange); text-align:center; }
-    .r2-track { display:flex; gap:0.85rem; align-items:flex-start; border-radius:10px; padding:0.75rem 0.9rem; }
+    .r2-track { display:flex; gap:0.7rem; align-items:flex-start; border-radius:10px; padding:0.55rem 0.85rem; }
     .r2-track-dev { background:#fafafa; border:1px solid #e8e0f0; border-left:3px solid var(--ss-purple); }
     .r2-track-lead { background:var(--ss-bg-beige); border:1px solid #f3e2cc; border-left:3px solid var(--ss-orange); }
-    .r2-icon { width:42px; height:42px; border-radius:10px; background:var(--ss-gradient); display:flex;
+    .r2-track-design { background:var(--ss-bg-purple); border:1px solid #d9cce8; border-left:3px solid var(--ss-warm-purple); }
+    .r2-icon { width:36px; height:36px; border-radius:9px; background:var(--ss-gradient); display:flex;
                align-items:center; justify-content:center; font-size:1.2rem; flex-shrink:0; }
-    .r2-track h4 { margin:0 0 0.2rem; font-size:0.8rem; color:var(--ss-purple); }
-    .r2-track p { margin:0; font-size:0.66rem; color:#555; line-height:1.45; }
+    .r2-track h4 { margin:0 0 0.15rem; font-size:0.77rem; color:var(--ss-purple); }
+    .r2-track p { margin:0; font-size:0.63rem; color:#555; line-height:1.4; }
     .r2-caption { margin-top:1.1rem; font-size:0.72rem; color:#444; background:var(--ss-bg-purple);
                   border-radius:8px; padding:0.7rem 1rem; line-height:1.6; }
     /* ── VEDLEGG · feedback runde 1 ── */
@@ -404,20 +405,19 @@
   <div class="r2-grid">
     <div class="r2-col r2-col-keep">
       <div class="r2-col-head"><span style="font-size:1.3rem;">✅</span><h4>Dette fungerte</h4></div>
-      <div class="bullet"><span class="bullet-dot" style="background:#2e7d32;"></span><span>Stort engasjement og høy oppslutning på tvers av roller</span></div>
-      <div class="bullet"><span class="bullet-dot" style="background:#2e7d32;"></span><span>Modul 1 (Vibe Coding) traff bredt – lav terskel og rask aha-opplevelse</span></div>
-      <div class="bullet"><span class="bullet-dot" style="background:#2e7d32;"></span><span>Kursportalen med AI-veileder fungerte godt til selvstudium i eget tempo</span></div>
-      <div class="bullet"><span class="bullet-dot" style="background:#2e7d32;"></span><span><em>[Placeholder – fyll inn flere punkter]</em></span></div>
+      <div class="bullet"><span class="bullet-dot" style="background:#2e7d32;"></span><span>Lav terskel i Modul 1 – alle kom raskt i gang, og konkurransen var en høydare</span></div>
+      <div class="bullet"><span class="bullet-dot" style="background:#2e7d32;"></span><span>Mye hands-on – verdsatt å få teste verktøy man ikke har i prosjekt</span></div>
+      <div class="bullet"><span class="bullet-dot" style="background:#2e7d32;"></span><span>AI-portalen – selvstudium i eget tempo fungerte godt</span></div>
+      <div class="bullet"><span class="bullet-dot" style="background:#2e7d32;"></span><span>For utviklere traff Context Engineering blink – «fra bare gøy til faktisk relevant hos kunde»</span></div>
     </div>
     <div class="r2-col r2-col-change">
       <div class="r2-col-head"><span style="font-size:1.3rem;">🔄</span><h4>Dette må endres</h4></div>
-      <div class="bullet"><span class="bullet-dot" style="background:var(--ss-red);"></span><span><strong>Modul 2 (Context Engineering)</strong> og <strong>Modul 3 (Agenter &amp; MCP)</strong> ble for teknisk og avansert for teknologiledere og designere<span class="r2-key">Hovedfunn</span></span></div>
-      <div class="bullet"><span class="bullet-dot" style="background:var(--ss-red);"></span><span>For mye fokus på implementasjon og kode – for lite på forståelse og bruksområder</span></div>
-      <div class="bullet"><span class="bullet-dot" style="background:var(--ss-red);"></span><span>Innholdet bør differensieres etter rolle og forkunnskap</span></div>
-      <div class="bullet"><span class="bullet-dot" style="background:var(--ss-red);"></span><span><em>[Placeholder – fyll inn flere punkter]</em></span></div>
+      <div class="bullet"><span class="bullet-dot" style="background:var(--ss-red);"></span><span><strong>Modul 2 (Context Engineering)</strong> og <strong>Modul 3 (Agenter &amp; MCP)</strong> ble for avansert for teknologiledere og designere <span style="color:#999;">(lavest «traff mitt nivå»: M2 = 3,93)</span><span class="r2-key">Hovedfunn</span></span></div>
+      <div class="bullet"><span class="bullet-dot" style="background:var(--ss-red);"></span><span>Miljøoppsett spiste øktetid (Docker/Rancher, tokens, Windows-brannmur) – bør settes opp på forhånd</span></div>
+      <div class="bullet"><span class="bullet-dot" style="background:var(--ss-red);"></span><span>AI-portalens forberedelses-coach henger seg opp (loop, ingen progressbar) – bør fikses</span></div>
+      <div class="bullet"><span class="bullet-dot" style="background:var(--ss-red);"></span><span>Innholdet i enkelte moduler justeres faglig for å treffe enda bedre</span></div>
     </div>
   </div>
-  <p class="r2-note">Utkast – punktene fylles inn og justeres sammen.</p>
 </section>
 
 <!-- ═══════════════════════════════════════════════════════ -->
@@ -436,19 +436,26 @@
     </div>
     <div class="r2-arrow">→</div>
     <div class="r2-split">
-      <div class="r2-split-label">Modul 2 &amp; 3 · samme tema, to dybdenivåer</div>
+      <div class="r2-split-label">Modul 2 &amp; 3 · samme tema, tre rolletilpassede spor</div>
       <div class="r2-track r2-track-dev">
         <div class="r2-icon">🛠</div>
         <div>
           <h4>Dybdespor · Utviklere</h4>
-          <p>Full teknisk dybde – AI harness, produksjonskode, bygge agenter &amp; MCP (i hovedsak som runde 1).</p>
+          <p>Full teknisk dybde – AI harness, produksjonskode, agenter &amp; MCP (i hovedsak som runde 1).</p>
         </div>
       </div>
       <div class="r2-track r2-track-lead">
         <div class="r2-icon">🧭</div>
         <div>
-          <h4>Tilpasset spor · Teknologiledere &amp; designere</h4>
-          <p>Konseptuell forståelse, demoer og bruksområder – mindre kode, mer «hva betyr dette for oss og leveransene våre».</p>
+          <h4>Tilpasset spor · Teknologiledere</h4>
+          <p>Strategi, bruksområder og beslutninger – hva AI betyr for leveranser, team og styring (lite kode).</p>
+        </div>
+      </div>
+      <div class="r2-track r2-track-design">
+        <div class="r2-icon">🎨</div>
+        <div>
+          <h4>Tilpasset spor · Designere</h4>
+          <p>UX, prototyping og samspill mellom design og AI – konsept og demoer framfor implementasjon.</p>
         </div>
       </div>
     </div>
@@ -460,8 +467,7 @@
       <span class="r2-tag">Felles</span>
     </div>
   </div>
-  <p class="r2-caption"><strong>Kjernegrep:</strong> Modul 2 og 3 beholder temaene, men deles i to dybdenivåer. Utviklere går i dybden som før, mens teknologiledere og designere får et tilpasset spor med vekt på forståelse, bruk og beslutninger framfor implementasjon.</p>
-  <p class="r2-note">Grafisk utkast – spor, plassering og tekst justeres sammen.</p>
+  <p class="r2-caption"><strong>Kjernegrep:</strong> Modul 2 og 3 beholder temaene, men deles i tre rolletilpassede spor. Utviklere går i dybden som før, teknologiledere får vekt på strategi og beslutninger, og designere på UX, prototyping og bruk – framfor implementasjon.</p>
 </section>
 
 <!-- ═══════════════════════════════════════════════════════ -->
