@@ -9,6 +9,9 @@
 *.xls
 *.xlsm
 
+# Client-sensitive decks (kept local only, not for GitHub)
+allmote/Simen.html
+
 # macOS
 .DS_Store
 
