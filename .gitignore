@@ -9,8 +9,8 @@
 *.xls
 *.xlsm
 
-# Client-sensitive decks (kept local only, not for GitHub)
-allmote/Simen.html
+# Allmøte decks — kept local only, not published to GitHub (client-sensitive)
+allmote/
 
 # macOS
 .DS_Store
