@@ -152,7 +152,7 @@
   <button id="reset" title="Reset view"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v4h4"/></svg></button>
 </div>
 
-<div class="hint" id="hint"><span><b>Scroll</b> to zoom</span><span><b>Drag</b> to pan</span><span><b>Click</b> a star</span></div>
+<div class="hint" id="hint"><span><b>Scroll</b> to zoom</span><span><b>Double-click</b> to zoom in</span><span><b>Drag</b> to pan</span><span><b>Click</b> a star</span></div>
 
 <div id="tip"><div class="n"></div><div class="d"></div></div>
 
@@ -434,7 +434,7 @@ const MODELS = [
    tags:['Agentic','Coding','Aligned'], ctx:'200K tokens', par:'—',
    desc:'Anthropic\'s most capable and, it claimed, best-aligned model — the first to clear 80% on SWE-bench Verified. A new "effort" control lets developers trade compute for accuracy, while prices fell sharply versus Opus 4.',
    notable:'First model past 80% on SWE-bench Verified; a top agentic coder.',
-   b:[['SWE-bench Verified',80.9],['GPQA Diamond',87.0]]},
+   b:[['SWE-bench Verified',80.9],['AA Intelligence Index',43,100,'']]},
 
   {id:'deepseekv4', name:'DeepSeek-V4', dev:'deepseek', date:'2026-04-24', sig:2,
    tags:['Open weights','MoE','Frontier'], ctx:'1M tokens', par:'1.6T (V4-Pro)',
@@ -444,9 +444,9 @@ const MODELS = [
 
   {id:'opus48', name:'Claude Opus 4.8', dev:'anthropic', date:'2026-05-28', sig:3,
    tags:['Agentic','Frontier','Current'], ctx:'1M tokens', par:'—',
-   desc:'The current Claude flagship, extending Opus to a million-token context with adaptive "thinking" and multi-agent teamwork. It sits at today\'s frontier of autonomous, long-horizon work — where this star map reaches the present.',
-   notable:'The present-day apex of the Claude line — the edge of "now".',
-   b:[], emerging:true},
+   desc:'The current general-purpose Claude flagship, extending Opus to a million-token context with adaptive "thinking" and multi-agent teamwork. It sits at today\'s frontier of autonomous, long-horizon work.',
+   notable:'Tops Artificial Analysis\'s composite Intelligence Index (61) — the most capable general Claude to date.',
+   b:[['AA Intelligence Index',61,100,'']]},
 
   {id:'gpt51', name:'GPT-5.1', dev:'openai', date:'2025-11-12', sig:2,
    tags:['Reasoning','Router'], ctx:'—', par:'—',
@@ -458,13 +458,13 @@ const MODELS = [
    tags:['Reasoning','Router'], ctx:'—', par:'—',
    desc:'A fast follow-up reportedly accelerated by Gemini 3 Pro\'s lead (an internal "code red"), with sharper spreadsheet, financial-modelling and multi-step project skills, in Instant, Thinking, Pro and Codex flavours.',
    notable:'Box\'s CEO measured it ~7 points above GPT-5.1 on enterprise knowledge work.',
-   b:[], emerging:true},
+   b:[['OSWorld-Verified',47.3]]},
 
   {id:'gpt54', name:'GPT-5.4', dev:'openai', date:'2026-03-05', sig:2,
    tags:['Reasoning','Router'], ctx:'—', par:'—',
-   desc:'OpenAI\'s spring-2026 GPT-5-series update, following the self-improving GPT-5.3-Codex coding model and continuing the auto-routing "system of models" design.',
-   notable:'The latest mainline GPT-5 iteration within this map\'s window.',
-   b:[], emerging:true},
+   desc:'OpenAI\'s spring-2026 GPT-5-series update, following the self-improving GPT-5.3-Codex coding model and continuing the auto-routing "system of models" design, with built-in computer use and deeper research.',
+   notable:'Beat the human average on the OSWorld-Verified computer-use test (75% vs 72.4%), cut factual errors ~33% vs GPT-5.2, and tied 3rd on the UK AI Security Institute cyber-range (behind Claude Mythos and Opus 4.6).',
+   b:[['OSWorld-Verified',75]]},
 
   {id:'opus41', name:'Claude Opus 4.1', dev:'anthropic', date:'2025-08-05', sig:2,
    tags:['Agentic','Coding'], ctx:'200K tokens', par:'—',
@@ -482,7 +482,7 @@ const MODELS = [
    tags:['Agentic','Long context','Coding'], ctx:'1M tokens (beta)', par:'—',
    desc:'The first Opus with a million-token context, topping the Terminal-Bench 2.0 agentic-coding and Humanity\'s Last Exam leaderboards. Famously, sixteen Opus 4.6 agents wrote a Rust C-compiler able to build the Linux kernel.',
    notable:'#1 on Terminal-Bench 2.0 and Humanity\'s Last Exam; huge long-context retrieval gains.',
-   b:[['MRCR v2 · 1M, 8-needle',76.0]]},
+   b:[['MRCR v2 · 1M, 8-needle',76.0],['AA Intelligence Index',46,100,'']]},
 
   {id:'sonnet46', name:'Claude Sonnet 4.6', dev:'anthropic', date:'2026-02-17', sig:2,
    tags:['Agentic','Long context'], ctx:'1M tokens (beta)', par:'—',
@@ -510,9 +510,9 @@ const MODELS = [
 
   {id:'grok41', name:'Grok 4.1', dev:'xai', date:'2025-11-17', sig:2,
    tags:['Reasoning','Long context'], ctx:'2M tokens', par:'—',
-   desc:'An incremental Grok 4 update with improved reasoning, multimodal understanding and "emotional intelligence", plus a 2-million-token Fast variant. Most quoted gains come from xAI\'s internal and community leaderboards.',
-   notable:'Pushed Grok\'s context to 2M tokens and tuned personality.',
-   b:[], emerging:true},
+   desc:'An incremental Grok 4 update with improved reasoning, multimodal understanding and "emotional intelligence", plus a 2-million-token Fast variant. Many quoted gains come from xAI\'s internal and community leaderboards.',
+   notable:'Topped the LMArena text leaderboard (#1, Thinking mode) and tuned for reasoning, multimodality and EQ.',
+   b:[['LMArena Arena Elo',1483,1550,'']]},
 
   {id:'deepseekv32', name:'DeepSeek-V3.2', dev:'deepseek', date:'2025-12-01', sig:2,
    tags:['Open weights','Efficient'], ctx:'128K tokens', par:'671B (37B active)',
@@ -530,6 +530,24 @@ const MODELS = [
    tags:['Open weights','MoE'], ctx:'—', par:'675B (41B active)',
    desc:'Mistral\'s first large mixture-of-experts — roughly 675B total / 41B active parameters under Apache-2.0, a big leap over the 123B Mistral Large 2 — launched with Ministral 3 and Devstral 2.',
    notable:'An open-weights frontier scale-up for Europe\'s Mistral.',
+   b:[], emerging:true},
+
+  {id:'mythos', name:'Claude Mythos', dev:'anthropic', date:'2026-04-07', sig:3,
+   tags:['Cybersecurity','Restricted','Agentic'], ctx:'—', par:'—',
+   desc:'A specialised Claude built to find software vulnerabilities. Anthropic withheld it from the public over misuse risk, instead launching "Project Glasswing" — a vetted consortium (Microsoft, Apple, Google, AWS, Nvidia, the Linux Foundation…) using it to find and patch flaws. Mozilla fixed 271 Firefox vulnerabilities with it.',
+   notable:'Ranked #1 on the UK AI Security Institute\'s cyber-range test (ahead of Opus 4.6 and GPT-5.4) and triggered central-bank and government security briefings worldwide.',
+   b:[], emerging:true},
+
+  {id:'mythos5', name:'Claude Mythos 5', dev:'anthropic', date:'2026-06-09', sig:3,
+   tags:['Cybersecurity','Restricted','Preview'], ctx:'—', par:'—',
+   desc:'A preview successor to Mythos, released via Project Glasswing as Anthropic\'s most capable vulnerability-finding model. Access was revoked three days later, on 12 June 2026, under a US government export-control directive citing national security.',
+   notable:'So capable at offensive and defensive security that governments restricted it within days of release.',
+   b:[], emerging:true},
+
+  {id:'fable5', name:'Claude Fable 5', dev:'anthropic', date:'2026-06-09', sig:2,
+   tags:['Cybersecurity','Safeguarded','Preview'], ctx:'—', par:'—',
+   desc:'Released alongside Mythos 5, Fable 5 is the same cyber-capable model wrapped in extended safety safeguards. Like Mythos 5, its access was suspended on 12 June 2026 under the US export-control directive.',
+   notable:'The safety-hardened twin of Mythos 5 — sitting at the very edge of "now" in June 2026.',
    b:[], emerging:true}
 ];
 
@@ -880,6 +898,20 @@ cv.addEventListener('wheel',e=>{
   tcam.y=before.y-(e.clientY-H/2)/nz;
 },{passive:false});
 
+// double-click to zoom in (toward cursor, or fly into a star)
+cv.addEventListener('dblclick',e=>{
+  e.preventDefault();
+  hideHint();
+  const node=pickNode(e.clientX,e.clientY);
+  if(node){
+    setCam(node.x, node.y, Math.min(MAXZ, Math.max(tcam.z*1.8, 2.4)), true);
+  } else {
+    const before=screenToWorld(e.clientX,e.clientY);
+    const nz=Math.min(MAXZ, tcam.z*1.9);
+    setCam(before.x-(e.clientX-W/2)/nz, before.y-(e.clientY-H/2)/nz, nz, true);
+  }
+});
+
 // touch
 let touchMode=null,pinchD=0,pinchMid=null;
 cv.addEventListener('touchstart',e=>{
@@ -941,12 +973,14 @@ function openPanel(m){
     fact('Developer',DEVS[m.dev].name)+
     fact('Context window',m.ctx)+
     fact('Parameters',m.par);
-  // benchmarks
+  // benchmarks: each entry = [label, value, max?, suffix?]  (defaults max=100, suffix='%')
   if(m.b && m.b.length){
-    $('pbench').innerHTML=m.b.map((bb,i)=>{
+    $('pbench').innerHTML=m.b.map((bb)=>{
+      const max=bb[2]||100, suf=(bb[3]!==undefined?bb[3]:'%');
+      const w=Math.max(2,Math.min(100,(bb[1]/max)*100));
       return `<div class="bench"><div class="top"><span class="lab">${bb[0]}</span>`+
-        `<span class="val" style="color:${col}">${bb[1]}%</span></div>`+
-        `<div class="track"><div class="fill" data-w="${bb[1]}" style="background:linear-gradient(90deg,${hex(col,.7)},${col})"></div></div></div>`;
+        `<span class="val" style="color:${col}">${bb[1]}${suf}</span></div>`+
+        `<div class="track"><div class="fill" data-w="${w}" style="background:linear-gradient(90deg,${hex(col,.7)},${col})"></div></div></div>`;
     }).join('');
     requestAnimationFrame(()=>{requestAnimationFrame(()=>{
       document.querySelectorAll('#pbench .fill').forEach(f=>f.style.width=f.dataset.w+'%');
@@ -956,7 +990,7 @@ function openPanel(m){
       ? 'A very recent frontier model. Its makers highlighted results mainly as leaderboard wins or charts rather than directly comparable public numbers, so standardised score bars aren\'t shown here — see "why it mattered" below for what set it apart.'
       : 'Standardised LLM benchmarks such as MMLU and GPQA postdate this model, so directly comparable scores aren\'t available. Its impact is best measured by the architecture and ideas it introduced.'}</div>`;
   }
-  $('pnote').innerHTML='<strong>Why it mattered:</strong> '+m.notable+'<br><br>Benchmark figures are as reported by the model\'s developer or public leaderboards (Artificial Analysis, Papers with Code). Evaluation setups (shots, chain-of-thought, tooling) vary between models, so treat cross-model comparisons as indicative.';
+  $('pnote').innerHTML='<strong>Why it mattered:</strong> '+m.notable+'<br><br>Benchmark figures are as reported by the developer or public leaderboards (Artificial Analysis, LMArena, Papers with Code); the "AA Intelligence Index" is Artificial Analysis\'s composite score. Evaluation setups vary, and many 2025–26 models published results only as charts/PDFs, so treat these as indicative.';
   document.getElementById('panel').classList.add('open');
   flyTo(m);
 }
