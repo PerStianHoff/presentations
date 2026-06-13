@@ -446,6 +446,90 @@ const MODELS = [
    tags:['Agentic','Frontier','Current'], ctx:'1M tokens', par:'—',
    desc:'The current Claude flagship, extending Opus to a million-token context with adaptive "thinking" and multi-agent teamwork. It sits at today\'s frontier of autonomous, long-horizon work — where this star map reaches the present.',
    notable:'The present-day apex of the Claude line — the edge of "now".',
+   b:[], emerging:true},
+
+  {id:'gpt51', name:'GPT-5.1', dev:'openai', date:'2025-11-12', sig:2,
+   tags:['Reasoning','Router'], ctx:'—', par:'—',
+   desc:'A warmer, more steerable refresh of GPT-5 with eight selectable personalities, shipped as Instant, Thinking and Codex variants — an incremental step up rather than a leap.',
+   notable:'Added customisable personalities and a friendlier default tone.',
+   b:[], emerging:true},
+
+  {id:'gpt52', name:'GPT-5.2', dev:'openai', date:'2025-12-11', sig:2,
+   tags:['Reasoning','Router'], ctx:'—', par:'—',
+   desc:'A fast follow-up reportedly accelerated by Gemini 3 Pro\'s lead (an internal "code red"), with sharper spreadsheet, financial-modelling and multi-step project skills, in Instant, Thinking, Pro and Codex flavours.',
+   notable:'Box\'s CEO measured it ~7 points above GPT-5.1 on enterprise knowledge work.',
+   b:[], emerging:true},
+
+  {id:'gpt54', name:'GPT-5.4', dev:'openai', date:'2026-03-05', sig:2,
+   tags:['Reasoning','Router'], ctx:'—', par:'—',
+   desc:'OpenAI\'s spring-2026 GPT-5-series update, following the self-improving GPT-5.3-Codex coding model and continuing the auto-routing "system of models" design.',
+   notable:'The latest mainline GPT-5 iteration within this map\'s window.',
+   b:[], emerging:true},
+
+  {id:'opus41', name:'Claude Opus 4.1', dev:'anthropic', date:'2025-08-05', sig:2,
+   tags:['Agentic','Coding'], ctx:'200K tokens', par:'—',
+   desc:'An incremental upgrade to Opus 4 focused on agentic, multi-file code refactoring, nudging Anthropic\'s coding state-of-the-art a little higher.',
+   notable:'Lifted SWE-bench Verified to 74.5%.',
+   b:[['SWE-bench Verified',74.5]]},
+
+  {id:'haiku45', name:'Claude Haiku 4.5', dev:'anthropic', date:'2025-10-15', sig:1,
+   tags:['Fast','Efficient'], ctx:'200K tokens', par:'—',
+   desc:'The small, fast and inexpensive member of the Claude 4 family — matching the older Sonnet 4\'s coding quality at roughly a third of the cost and twice the speed, and beating it on computer use.',
+   notable:'Brought near-frontier coding to $1/$5-per-million pricing.',
+   b:[], emerging:true},
+
+  {id:'opus46', name:'Claude Opus 4.6', dev:'anthropic', date:'2026-02-05', sig:3,
+   tags:['Agentic','Long context','Coding'], ctx:'1M tokens (beta)', par:'—',
+   desc:'The first Opus with a million-token context, topping the Terminal-Bench 2.0 agentic-coding and Humanity\'s Last Exam leaderboards. Famously, sixteen Opus 4.6 agents wrote a Rust C-compiler able to build the Linux kernel.',
+   notable:'#1 on Terminal-Bench 2.0 and Humanity\'s Last Exam; huge long-context retrieval gains.',
+   b:[['MRCR v2 · 1M, 8-needle',76.0]]},
+
+  {id:'sonnet46', name:'Claude Sonnet 4.6', dev:'anthropic', date:'2026-02-17', sig:2,
+   tags:['Agentic','Long context'], ctx:'1M tokens (beta)', par:'—',
+   desc:'A million-token-context Sonnet that reaches Opus-level quality on many economically valuable office tasks and became the default model on Claude.ai. In blind tests, users preferred it to November\'s Opus 4.5.',
+   notable:'Opus-level work at Sonnet speed and price.',
+   b:[], emerging:true},
+
+  {id:'opus47', name:'Claude Opus 4.7', dev:'anthropic', date:'2026-04-16', sig:3,
+   tags:['Agentic','Vision'], ctx:'1M tokens', par:'—',
+   desc:'Adds far sharper high-resolution vision (up to ~3.75-megapixel images), a new "xhigh" effort level and the first live, real-time cybersecurity safeguards, while posting state-of-the-art results on economic-value and finance-agent evaluations.',
+   notable:'State-of-the-art on Artificial Analysis\'s GDPval and finance-agent tasks.',
+   b:[], emerging:true},
+
+  {id:'gemini31', name:'Gemini 3.1 Pro', dev:'google', date:'2026-02-19', sig:2,
+   tags:['Reasoning','Multimodal','MoE'], ctx:'1M tokens', par:'—',
+   desc:'Google\'s spring-2026 Pro update, refining Gemini 3\'s sparse mixture-of-experts reasoning and native multimodality as the production Pro model.',
+   notable:'Kept Google at the multimodal frontier into 2026.',
+   b:[], emerging:true},
+
+  {id:'gemini35f', name:'Gemini 3.5 Flash', dev:'google', date:'2026-05-19', sig:1,
+   tags:['Multimodal','Fast'], ctx:'1M tokens', par:'—',
+   desc:'A fast, cost-efficient Flash model built on Gemini 3 Flash, aimed at high-throughput multimodal workloads.',
+   notable:'The speed-and-cost tier of the Gemini 3.5 generation.',
+   b:[], emerging:true},
+
+  {id:'grok41', name:'Grok 4.1', dev:'xai', date:'2025-11-17', sig:2,
+   tags:['Reasoning','Long context'], ctx:'2M tokens', par:'—',
+   desc:'An incremental Grok 4 update with improved reasoning, multimodal understanding and "emotional intelligence", plus a 2-million-token Fast variant. Most quoted gains come from xAI\'s internal and community leaderboards.',
+   notable:'Pushed Grok\'s context to 2M tokens and tuned personality.',
+   b:[], emerging:true},
+
+  {id:'deepseekv32', name:'DeepSeek-V3.2', dev:'deepseek', date:'2025-12-01', sig:2,
+   tags:['Open weights','Efficient'], ctx:'128K tokens', par:'671B (37B active)',
+   desc:'An efficiency-focused open release introducing "DeepSeek Sparse Attention" for cheaper long-context inference, shipped MIT-licensed alongside a reasoning variant, V3.2-Speciale.',
+   notable:'Sparse-attention efficiency for open long-context models.',
+   b:[], emerging:true},
+
+  {id:'qwen35', name:'Qwen3.5', dev:'alibaba', date:'2026-02-16', sig:2,
+   tags:['Open weights','Agentic'], ctx:'—', par:'—',
+   desc:'Alibaba\'s open-weights update, which the company claims beats U.S. rivals on several objective metrics including speed and cost, and can act autonomously across mobile and desktop apps.',
+   notable:'A fast, cheap, agentic open model from China.',
+   b:[], emerging:true},
+
+  {id:'mistrallarge3', name:'Mistral Large 3', dev:'mistral', date:'2025-12-15', sig:2,
+   tags:['Open weights','MoE'], ctx:'—', par:'675B (41B active)',
+   desc:'Mistral\'s first large mixture-of-experts — roughly 675B total / 41B active parameters under Apache-2.0, a big leap over the 123B Mistral Large 2 — launched with Ministral 3 and Devstral 2.',
+   notable:'An open-weights frontier scale-up for Europe\'s Mistral.',
    b:[], emerging:true}
 ];
 
@@ -459,7 +543,7 @@ let W=0,H=0,DPR=Math.min(window.devicePixelRatio||1,2);
 const T_MIN = Date.UTC(2018,0,1);
 const T_MAX = Date.UTC(2026,6,1);
 const WORLD_W = 5200;
-const LANE = 86;                 // vertical spacing unit
+const LANE = 80;                 // vertical spacing unit
 const tval = d => Date.parse(d);
 const dateToX = d => ((tval(d)-T_MIN)/(T_MAX-T_MIN))*WORLD_W - WORLD_W/2;
 
@@ -467,15 +551,15 @@ const dateToX = d => ((tval(d)-T_MIN)/(T_MAX-T_MIN))*WORLD_W - WORLD_W/2;
 (function layout(){
   const sorted=[...MODELS].sort((a,b)=>tval(a.date)-tval(b.date));
   const placed=[];
-  const offs=[0,1,-1,2,-2,3,-3,4,-4,5,-5];
+  const offs=[0]; for(let k=1;k<=14;k++){offs.push(k,-k);}
   for(const m of sorted){
     m.x=dateToX(m.date);
-    let chosen=0;
+    let chosen=offs[offs.length-1]*LANE;
     for(const o of offs){
       const y=o*LANE;
       let ok=true;
       for(const p of placed){
-        if(Math.abs(p.x-m.x)<150 && Math.abs(p.y-y)<LANE*0.9){ok=false;break;}
+        if(Math.abs(p.x-m.x)<118 && Math.abs(p.y-y)<LANE*0.9){ok=false;break;}
       }
       if(ok){chosen=y;break;}
     }
@@ -869,7 +953,7 @@ function openPanel(m){
     });});
   } else {
     $('pbench').innerHTML=`<div class="nobench">${m.emerging
-      ? 'A brand-new frontier model — standardised, independently-verified benchmark scores are still emerging and not yet comparable across labs. Its headline is sheer scale, context length and agentic capability.'
+      ? 'A very recent frontier model. Its makers highlighted results mainly as leaderboard wins or charts rather than directly comparable public numbers, so standardised score bars aren\'t shown here — see "why it mattered" below for what set it apart.'
       : 'Standardised LLM benchmarks such as MMLU and GPQA postdate this model, so directly comparable scores aren\'t available. Its impact is best measured by the architecture and ideas it introduced.'}</div>`;
   }
   $('pnote').innerHTML='<strong>Why it mattered:</strong> '+m.notable+'<br><br>Benchmark figures are as reported by the model\'s developer or public leaderboards (Artificial Analysis, Papers with Code). Evaluation setups (shots, chain-of-thought, tooling) vary between models, so treat cross-model comparisons as indicative.';
