@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>The LLM Universe · A Timeline of Large Language Models</title>
+<style>
+  :root{
+    --bg0:#03020a;
+    --bg1:#080720;
+    --ink:#eef0ff;
+    --muted:#9aa0c4;
+    --faint:#5a5f86;
+    --glass:rgba(16,16,38,0.55);
+    --glass-strong:rgba(14,14,34,0.86);
+    --stroke:rgba(150,160,235,0.18);
+    --font:'Hurme Geometric Sans 3', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, Arial, sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;overflow:hidden;background:var(--bg0);color:var(--ink);font-family:var(--font)}
+  #stage{position:fixed;inset:0;display:block;touch-action:none;cursor:grab}
+  #stage.dragging{cursor:grabbing}
+
+  /* ---------- Title ---------- */
+  .topbar{position:fixed;top:0;left:0;right:0;padding:20px 26px;display:flex;justify-content:space-between;
+    align-items:flex-start;pointer-events:none;z-index:20}
+  .brand h1{margin:0;font-size:22px;letter-spacing:.04em;font-weight:700;
+    background:linear-gradient(90deg,#7fd8ff,#b99bff 45%,#ff8ad1 80%,#ffd27a);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+    text-shadow:0 0 30px rgba(150,120,255,.25)}
+  .brand p{margin:3px 0 0;font-size:12.5px;color:var(--muted);letter-spacing:.14em;text-transform:uppercase}
+
+  /* ---------- Search ---------- */
+  .search-wrap{pointer-events:auto;position:relative}
+  #search{width:230px;background:var(--glass);border:1px solid var(--stroke);color:var(--ink);
+    padding:9px 13px;border-radius:11px;font-size:13px;outline:none;backdrop-filter:blur(10px);
+    transition:.2s;font-family:inherit}
+  #search:focus{border-color:rgba(150,160,255,.5);box-shadow:0 0 0 3px rgba(120,120,255,.12)}
+  #search::placeholder{color:var(--faint)}
+  .results{position:absolute;top:42px;right:0;width:270px;max-height:320px;overflow:auto;
+    background:var(--glass-strong);border:1px solid var(--stroke);border-radius:12px;backdrop-filter:blur(16px);
+    display:none;padding:6px;box-shadow:0 18px 50px rgba(0,0,0,.5)}
+  .results.show{display:block}
+  .result{padding:8px 10px;border-radius:8px;cursor:pointer;display:flex;align-items:center;gap:9px;font-size:13px}
+  .result:hover{background:rgba(255,255,255,.06)}
+  .result .dot{width:8px;height:8px;border-radius:50%;flex:none;box-shadow:0 0 8px currentColor}
+  .result .yr{margin-left:auto;color:var(--faint);font-size:11.5px}
+
+  /* ---------- Legend ---------- */
+  .legend{position:fixed;left:22px;bottom:22px;z-index:20;background:var(--glass);border:1px solid var(--stroke);
+    border-radius:14px;padding:13px 15px;backdrop-filter:blur(12px);max-width:230px}
+  .legend h3{margin:0 0 9px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .legend .row{display:flex;align-items:center;gap:9px;padding:4px 6px;border-radius:7px;cursor:pointer;
+    font-size:12.5px;color:#cfd3f2;transition:.15s}
+  .legend .row:hover{background:rgba(255,255,255,.05)}
+  .legend .row.off{opacity:.32}
+  .legend .sw{width:10px;height:10px;border-radius:50%;flex:none;box-shadow:0 0 9px currentColor}
+
+  /* ---------- Controls ---------- */
+  .controls{position:fixed;right:22px;bottom:22px;z-index:20;display:flex;flex-direction:column;gap:9px}
+  .controls button{width:42px;height:42px;border-radius:12px;border:1px solid var(--stroke);background:var(--glass);
+    color:var(--ink);font-size:19px;cursor:pointer;backdrop-filter:blur(12px);transition:.15s;display:flex;
+    align-items:center;justify-content:center;font-family:inherit}
+  .controls button:hover{background:rgba(120,120,255,.18);border-color:rgba(150,160,255,.5)}
+  .controls button svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round}
+
+  /* ---------- Hint ---------- */
+  .hint{position:fixed;bottom:26px;left:50%;transform:translateX(-50%);z-index:15;color:var(--faint);
+    font-size:12px;letter-spacing:.05em;pointer-events:none;display:flex;gap:18px;transition:opacity .6s}
+  .hint b{color:var(--muted);font-weight:600}
+  .hint.gone{opacity:0}
+
+  /* ---------- Tooltip ---------- */
+  #tip{position:fixed;z-index:30;pointer-events:none;background:var(--glass-strong);border:1px solid var(--stroke);
+    border-radius:10px;padding:8px 11px;font-size:12.5px;backdrop-filter:blur(10px);opacity:0;transition:opacity .12s;
+    white-space:nowrap;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+  #tip .n{font-weight:700}
+  #tip .d{color:var(--muted);font-size:11px;margin-top:1px}
+
+  /* ---------- Info panel ---------- */
+  #panel{position:fixed;top:0;right:0;height:100%;width:420px;max-width:92vw;z-index:40;
+    background:linear-gradient(180deg,rgba(12,12,30,.94),rgba(8,8,22,.97));backdrop-filter:blur(22px);
+    border-left:1px solid var(--stroke);transform:translateX(105%);transition:transform .5s cubic-bezier(.16,1,.3,1);
+    overflow-y:auto;box-shadow:-30px 0 80px rgba(0,0,0,.55)}
+  #panel.open{transform:translateX(0)}
+  .p-head{position:relative;padding:30px 28px 22px;overflow:hidden}
+  .p-glow{position:absolute;top:-120px;right:-80px;width:320px;height:320px;border-radius:50%;
+    filter:blur(60px);opacity:.5;pointer-events:none}
+  .p-close{position:absolute;top:18px;right:18px;width:34px;height:34px;border-radius:9px;border:1px solid var(--stroke);
+    background:rgba(255,255,255,.05);color:var(--ink);cursor:pointer;font-size:18px;z-index:2}
+  .p-close:hover{background:rgba(255,255,255,.12)}
+  .p-dev{display:inline-flex;align-items:center;gap:8px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;
+    color:var(--muted);font-weight:600}
+  .p-dev .dot{width:9px;height:9px;border-radius:50%;box-shadow:0 0 10px currentColor}
+  .p-name{font-size:30px;font-weight:700;margin:12px 0 6px;line-height:1.08}
+  .p-date{font-size:13.5px;color:var(--muted)}
+  .p-tags{display:flex;flex-wrap:wrap;gap:7px;margin-top:15px}
+  .tag{font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid var(--stroke);color:#cdd2f4;
+    background:rgba(255,255,255,.04)}
+  .p-body{padding:6px 28px 40px}
+  .p-desc{font-size:14.5px;line-height:1.62;color:#d7dbf5;margin:6px 0 22px}
+  .facts{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:26px}
+  .fact{background:rgba(255,255,255,.035);border:1px solid var(--stroke);border-radius:12px;padding:12px 14px}
+  .fact .k{font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:5px}
+  .fact .v{font-size:15px;font-weight:600;color:#eef1ff}
+  .sect-title{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-weight:600;
+    margin:0 0 15px;display:flex;align-items:center;gap:10px}
+  .sect-title::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--stroke),transparent)}
+  .bench{margin-bottom:15px}
+  .bench .top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+  .bench .lab{font-size:13px;color:#dfe2fb}
+  .bench .val{font-size:14px;font-weight:700;font-variant-numeric:tabular-nums}
+  .bench .track{height:8px;border-radius:6px;background:rgba(255,255,255,.07);overflow:hidden}
+  .bench .fill{height:100%;border-radius:6px;width:0;transition:width 1s cubic-bezier(.16,1,.3,1)}
+  .nobench{font-size:13px;color:var(--muted);line-height:1.6;background:rgba(255,255,255,.035);
+    border:1px solid var(--stroke);border-radius:12px;padding:14px}
+  .p-note{font-size:11px;color:var(--faint);line-height:1.6;margin-top:24px;border-top:1px solid var(--stroke);padding-top:16px}
+  .p-foot{display:flex;justify-content:space-between;gap:10px;margin-top:18px}
+  .p-foot button{flex:1;padding:11px;border-radius:11px;border:1px solid var(--stroke);background:rgba(255,255,255,.05);
+    color:var(--ink);font-size:13px;cursor:pointer;font-family:inherit;transition:.15s}
+  .p-foot button:hover{background:rgba(120,120,255,.18)}
+
+  /* scrollbars */
+  #panel::-webkit-scrollbar,.results::-webkit-scrollbar{width:8px}
+  #panel::-webkit-scrollbar-thumb,.results::-webkit-scrollbar-thumb{background:rgba(150,160,255,.25);border-radius:8px}
+
+  @media (max-width:640px){
+    .brand h1{font-size:17px}.brand p{display:none}
+    #search{width:150px}.legend{display:none}.hint{display:none}
+  }
+</style>
+</head>
+<body>
+<canvas id="stage"></canvas>
+
+<div class="topbar">
+  <div class="brand">
+    <h1>The LLM Universe</h1>
+    <p>A Timeline of Large Language Models</p>
+  </div>
+  <div class="search-wrap">
+    <input id="search" type="text" placeholder="Search a model…" autocomplete="off" spellcheck="false"/>
+    <div class="results" id="results"></div>
+  </div>
+</div>
+
+<div class="legend" id="legend"><h3>Developers</h3></div>
+
+<div class="controls">
+  <button id="zin" title="Zoom in"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></button>
+  <button id="zout" title="Zoom out"><svg viewBox="0 0 24 24"><path d="M5 12h14"/></svg></button>
+  <button id="reset" title="Reset view"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7M3 4v4h4"/></svg></button>
+</div>
+
+<div class="hint" id="hint"><span><b>Scroll</b> to zoom</span><span><b>Drag</b> to pan</span><span><b>Click</b> a star</span></div>
+
+<div id="tip"><div class="n"></div><div class="d"></div></div>
+
+<aside id="panel">
+  <div class="p-head">
+    <div class="p-glow" id="pglow"></div>
+    <button class="p-close" id="pclose">×</button>
+    <div class="p-dev"><span class="dot"></span><span id="pdev"></span></div>
+    <div class="p-name" id="pname"></div>
+    <div class="p-date" id="pdate"></div>
+    <div class="p-tags" id="ptags"></div>
+  </div>
+  <div class="p-body">
+    <div class="p-desc" id="pdesc"></div>
+    <div class="facts" id="pfacts"></div>
+    <div class="sect-title">Benchmarks</div>
+    <div id="pbench"></div>
+    <div class="p-note" id="pnote"></div>
+    <div class="p-foot">
+      <button id="pprev">← Earlier</button>
+      <button id="pnext">Later →</button>
+    </div>
+  </div>
+</aside>
+
+<script>
+/* ============================================================
+   DATA
+   ============================================================ */
+const DEVS = {
+  openai:    {name:'OpenAI',           color:'#10c9a3'},
+  anthropic: {name:'Anthropic',        color:'#e08a5b'},
+  google:    {name:'Google DeepMind',  color:'#4d8bff'},
+  meta:      {name:'Meta',             color:'#19c2ff'},
+  mistral:   {name:'Mistral AI',       color:'#ff8a1e'},
+  deepseek:  {name:'DeepSeek',         color:'#7d7cff'},
+  xai:       {name:'xAI',              color:'#d2d6e4'},
+  alibaba:   {name:'Alibaba · Qwen',   color:'#b06bff'}
+};
+
+// b: benchmark array [label, value(0-100)]. ctx: context window. par: parameters.
+// sig: significance 1-3 (node size / always-label). tags: capability badges.
+const MODELS = [
+  {id:'gpt1', name:'GPT-1', dev:'openai', date:'2018-06-11', sig:2,
+   tags:['Foundational'], ctx:'512 tokens', par:'117M',
+   desc:'The first Generative Pre-trained Transformer. Introduced the now-standard recipe of unsupervised pre-training on raw text followed by supervised fine-tuning, using a 12-layer Transformer decoder.',
+   notable:'Originated the "GPT" lineage and the pre-train → fine-tune paradigm.',
+   b:[]},
+
+  {id:'bert', name:'BERT', dev:'google', date:'2018-10-11', sig:2,
+   tags:['Encoder','NLU'], ctx:'512 tokens', par:'340M',
+   desc:'A bidirectional Transformer encoder pre-trained with masked-language-modelling. BERT read context in both directions and swept the language-understanding leaderboards of its era.',
+   notable:'Defined the NLU era; still powers countless search & embedding systems.',
+   b:[['GLUE',80.5],['SQuAD 1.1 (F1)',93.2],['SQuAD 2.0 (F1)',83.1]]},
+
+  {id:'gpt2', name:'GPT-2', dev:'openai', date:'2019-02-14', sig:2,
+   tags:['Foundational'], ctx:'1,024 tokens', par:'1.5B',
+   desc:'Scaled the GPT idea to 1.5B parameters and produced startlingly coherent long-form text. OpenAI initially withheld the full model over misuse concerns, releasing it in stages.',
+   notable:'The "too dangerous to release" moment; strong zero-shot task transfer.',
+   b:[['LAMBADA (acc)',63.2],['CBT-CN (acc)',93.3]]},
+
+  {id:'t5', name:'T5', dev:'google', date:'2019-10-23', sig:1,
+   tags:['Encoder-Decoder'], ctx:'512 tokens', par:'11B',
+   desc:'The "Text-to-Text Transfer Transformer" reframed every NLP task — translation, classification, QA — as text-in, text-out, trained on the massive C4 corpus.',
+   notable:'Unified seq2seq framework and the influential C4 dataset.',
+   b:[['GLUE',89.7],['SuperGLUE',88.9],['SQuAD (F1)',95.6]]},
+
+  {id:'gpt3', name:'GPT-3', dev:'openai', date:'2020-05-28', sig:3,
+   tags:['Foundational','Few-shot'], ctx:'2,048 tokens', par:'175B',
+   desc:'At 175B parameters, GPT-3 showed that sheer scale unlocks in-context "few-shot" learning — performing new tasks from a prompt alone, with no weight updates.',
+   notable:'Sparked the modern LLM era and the first commercial LLM API.',
+   b:[['MMLU (5-shot)',43.9],['TriviaQA',71.2],['LAMBADA',76.2],['HellaSwag',78.9]]},
+
+  {id:'palm', name:'PaLM', dev:'google', date:'2022-04-04', sig:2,
+   tags:['Foundational','Reasoning'], ctx:'2,048 tokens', par:'540B',
+   desc:'A 540B-parameter dense model trained on Google\'s Pathways system. PaLM showcased how scale plus chain-of-thought prompting unlocks multi-step reasoning.',
+   notable:'Demonstrated emergent reasoning via chain-of-thought at scale.',
+   b:[['MMLU (5-shot)',69.3],['GSM8K (CoT)',58.1],['HumanEval',26.2]]},
+
+  {id:'chatgpt', name:'ChatGPT · GPT-3.5', dev:'openai', date:'2022-11-30', sig:3,
+   tags:['Chat','RLHF'], ctx:'4,096 tokens', par:'—',
+   desc:'A conversational model fine-tuned from GPT-3.5 with reinforcement learning from human feedback. Free, fluent and remarkably general, it reached 100M users faster than any app before it.',
+   notable:'Brought LLMs to the mainstream and ignited the generative-AI boom.',
+   b:[['MMLU',70.0],['HumanEval',48.1],['GSM8K',57.1]]},
+
+  {id:'llama1', name:'LLaMA', dev:'meta', date:'2023-02-24', sig:3,
+   tags:['Open weights'], ctx:'2,048 tokens', par:'7B–65B',
+   desc:'Meta\'s efficient foundation models (7B–65B). The 13B variant rivalled GPT-3 175B, and the weights leaked then spread — seeding an explosion of open research.',
+   notable:'Launched the open-weights ecosystem (Alpaca, Vicuna, llama.cpp…).',
+   b:[['MMLU (5-shot)',63.4],['HellaSwag',84.2],['GSM8K',50.9],['HumanEval',23.7]]},
+
+  {id:'gpt4', name:'GPT-4', dev:'openai', date:'2023-03-14', sig:3,
+   tags:['Multimodal','Frontier'], ctx:'8K–32K tokens', par:'—',
+   desc:'A large multimodal model (image + text in) that delivered a major leap in reasoning and reliability, scoring near the top percentile on bar, SAT and AP exams.',
+   notable:'Set the "GPT-4 class" bar that every rival chased for over a year.',
+   b:[['MMLU (5-shot)',86.4],['HumanEval',67.0],['GSM8K',92.0],['MATH',42.5]]},
+
+  {id:'claude1', name:'Claude', dev:'anthropic', date:'2023-03-14', sig:2,
+   tags:['Chat','Constitutional AI'], ctx:'9K tokens', par:'—',
+   desc:'Anthropic\'s first assistant, trained with "Constitutional AI" — using a written set of principles to make the model helpful and harmless with less human labelling.',
+   notable:'Introduced Constitutional AI and an early long-context assistant.',
+   b:[['MMLU (5-shot)',75.6],['HumanEval',56.0]]},
+
+  {id:'palm2', name:'PaLM 2', dev:'google', date:'2023-05-10', sig:2,
+   tags:['Chat','Multilingual'], ctx:'8K tokens', par:'—',
+   desc:'The engine behind Bard, with stronger multilingual, reasoning and coding skills than PaLM, offered in sizes from on-device "Gecko" up to "Unicorn".',
+   notable:'Powered Bard and a model family scaling down to phones.',
+   b:[['MMLU',78.3],['GSM8K',80.7],['HumanEval',37.6]]},
+
+  {id:'claude2', name:'Claude 2', dev:'anthropic', date:'2023-07-11', sig:2,
+   tags:['Chat','Long context'], ctx:'100K tokens', par:'—',
+   desc:'A big step up in coding and long-document analysis, with a then-huge 100K-token context window and a public claude.ai launch.',
+   notable:'Brought 100K-token context to the masses.',
+   b:[['MMLU',78.5],['HumanEval',71.2],['GSM8K',88.0]]},
+
+  {id:'llama2', name:'Llama 2', dev:'meta', date:'2023-07-18', sig:3,
+   tags:['Open weights','Chat'], ctx:'4,096 tokens', par:'7B–70B',
+   desc:'The first Llama released with weights under a commercial licence, including RLHF-tuned chat models. It became the backbone of thousands of fine-tunes.',
+   notable:'Made open LLMs viable for commercial products.',
+   b:[['MMLU (5-shot)',68.9],['HumanEval',29.9],['GSM8K',56.8]]},
+
+  {id:'mistral7b', name:'Mistral 7B', dev:'mistral', date:'2023-09-27', sig:2,
+   tags:['Open weights','Efficient'], ctx:'8K (32K SWA)', par:'7.3B',
+   desc:'A 7.3B model using grouped-query and sliding-window attention that outperformed Llama 2 13B, shipped under the permissive Apache-2.0 licence.',
+   notable:'Europe\'s open-weights champion arrives.',
+   b:[['MMLU',60.1],['HumanEval',30.5],['GSM8K',52.2]]},
+
+  {id:'gemini1', name:'Gemini 1.0 Ultra', dev:'google', date:'2023-12-06', sig:3,
+   tags:['Multimodal','Frontier'], ctx:'32K tokens', par:'—',
+   desc:'Google\'s natively multimodal flagship, trained across text, images, audio and video. It became the first model to surpass 90% on MMLU (using CoT@32).',
+   notable:'First to cross 90% MMLU; Nano/Pro/Ultra tiers.',
+   b:[['MMLU (CoT@32)',90.0],['GSM8K',94.4],['HumanEval',74.4],['MATH',53.2]]},
+
+  {id:'mixtral', name:'Mixtral 8×7B', dev:'mistral', date:'2023-12-11', sig:2,
+   tags:['Open weights','MoE'], ctx:'32K tokens', par:'46.7B (12.9B active)',
+   desc:'A sparse mixture-of-experts model that matched Llama 2 70B quality while running roughly 6× faster, using only ~13B active parameters per token.',
+   notable:'Popularised open mixture-of-experts; Apache-2.0.',
+   b:[['MMLU',70.6],['HumanEval',40.2],['GSM8K',58.4],['MATH',28.4]]},
+
+  {id:'gemini15', name:'Gemini 1.5 Pro', dev:'google', date:'2024-02-15', sig:3,
+   tags:['Multimodal','Long context'], ctx:'1M–2M tokens', par:'—',
+   desc:'A mixture-of-experts model with a breakthrough 1M-token (later 2M) context and near-perfect "needle-in-a-haystack" recall across whole books, codebases and hours of video.',
+   notable:'Redefined what long-context retrieval could do.',
+   b:[['MMLU',81.9],['HumanEval',71.9],['MATH',58.5]]},
+
+  {id:'claude3', name:'Claude 3 Opus', dev:'anthropic', date:'2024-03-04', sig:3,
+   tags:['Multimodal','Frontier'], ctx:'200K tokens', par:'—',
+   desc:'The top tier of the Claude 3 family (Haiku / Sonnet / Opus), adding vision and beating GPT-4 on many benchmarks with a strong reasoning and writing style.',
+   notable:'First Claude to credibly out-score GPT-4.',
+   b:[['MMLU (5-shot)',86.8],['GPQA Diamond',50.4],['HumanEval',84.9],['MATH',60.1]]},
+
+  {id:'llama3', name:'Llama 3 70B', dev:'meta', date:'2024-04-18', sig:2,
+   tags:['Open weights','Chat'], ctx:'8K tokens', par:'8B & 70B',
+   desc:'Trained on 15T tokens, Llama 3 set a new bar for open models at launch, with sharply improved reasoning, coding and instruction-following.',
+   notable:'Best open weights of its moment; basis for Llama 3.1.',
+   b:[['MMLU (5-shot)',82.0],['GPQA',39.5],['HumanEval',81.7],['MATH',50.4]]},
+
+  {id:'gpt4o', name:'GPT-4o', dev:'openai', date:'2024-05-13', sig:3,
+   tags:['Omni-modal','Realtime'], ctx:'128K tokens', par:'—',
+   desc:'The "omni" model handles text, audio and vision end-to-end in a single network, enabling real-time voice conversation with ~320ms latency — all faster and cheaper than GPT-4.',
+   notable:'Brought real-time multimodal AI to the free tier.',
+   b:[['MMLU',88.7],['GPQA Diamond',53.6],['HumanEval',90.2],['MATH',76.6]]},
+
+  {id:'claude35', name:'Claude 3.5 Sonnet', dev:'anthropic', date:'2024-06-20', sig:3,
+   tags:['Multimodal','Coding'], ctx:'200K tokens', par:'—',
+   desc:'A mid-tier model that outperformed the larger Claude 3 Opus, became the developers\' coding favourite, and introduced Artifacts and experimental computer use.',
+   notable:'Set the price/performance standard; SWE-bench leader.',
+   b:[['MMLU',88.7],['GPQA Diamond',59.4],['HumanEval',92.0],['SWE-bench Verified',49.0]]},
+
+  {id:'llama31', name:'Llama 3.1 405B', dev:'meta', date:'2024-07-23', sig:3,
+   tags:['Open weights','Frontier'], ctx:'128K tokens', par:'405B',
+   desc:'The largest openly available frontier model, matching closed GPT-4-class systems on many evals while shipping full weights for anyone to run or fine-tune.',
+   notable:'Proved open models could reach the closed frontier.',
+   b:[['MMLU',88.6],['GPQA Diamond',51.1],['HumanEval',89.0],['MATH',73.8]]},
+
+  {id:'o1', name:'OpenAI o1', dev:'openai', date:'2024-12-05', sig:3,
+   tags:['Reasoning','Frontier'], ctx:'200K tokens', par:'—',
+   desc:'The first "reasoning" model: it spends extra compute thinking through a long internal chain of thought before answering, dramatically lifting math, science and coding scores.',
+   notable:'Opened the test-time-compute / reasoning era.',
+   b:[['MMLU',92.3],['GPQA Diamond',78.0],['AIME 2024',83.3],['MATH',96.4]]},
+
+  {id:'deepseekv3', name:'DeepSeek-V3', dev:'deepseek', date:'2024-12-26', sig:3,
+   tags:['Open weights','MoE'], ctx:'128K tokens', par:'671B (37B active)',
+   desc:'A 671B mixture-of-experts model trained for a reported ~$5.6M that reached GPT-4o-class quality — and shipped with open weights.',
+   notable:'Stunned the industry on cost-efficiency.',
+   b:[['MMLU',88.5],['MMLU-Pro',75.9],['GPQA Diamond',59.1],['MATH',90.2]]},
+
+  {id:'deepseekr1', name:'DeepSeek-R1', dev:'deepseek', date:'2025-01-20', sig:3,
+   tags:['Reasoning','Open weights'], ctx:'128K tokens', par:'671B (37B active)',
+   desc:'An open reasoning model rivalling o1, trained largely through pure reinforcement learning. Free and MIT-licensed, it triggered a global stir — and a tech-stock sell-off.',
+   notable:'The open "o1 moment"; reasoning for everyone.',
+   b:[['MMLU',90.8],['GPQA Diamond',71.5],['AIME 2024',79.8],['MATH-500',97.3]]},
+
+  {id:'claude37', name:'Claude 3.7 Sonnet', dev:'anthropic', date:'2025-02-24', sig:3,
+   tags:['Hybrid reasoning','Coding'], ctx:'200K tokens', par:'—',
+   desc:'The first hybrid model — it can answer instantly or switch on visible "extended thinking" for harder problems. It set coding records and launched the Claude Code agent.',
+   notable:'Hybrid instant/extended thinking; coding SOTA.',
+   b:[['GPQA Diamond',84.8],['SWE-bench Verified',70.3],['AIME 2024',61.3]]},
+
+  {id:'grok3', name:'Grok 3', dev:'xai', date:'2025-02-17', sig:2,
+   tags:['Reasoning','Frontier'], ctx:'1M tokens', par:'—',
+   desc:'xAI\'s flagship, trained on the 100k+ GPU "Colossus" supercluster, with "Think" and "Big Brain" reasoning modes and a DeepSearch agent.',
+   notable:'A dramatic compute scale-up by a new frontier lab.',
+   b:[['GPQA Diamond',84.6],['AIME 2025',93.3],['MMLU-Pro',79.9]]},
+
+  {id:'gpt45', name:'GPT-4.5', dev:'openai', date:'2025-02-27', sig:2,
+   tags:['Chat','Knowledge'], ctx:'128K tokens', par:'—',
+   desc:'OpenAI\'s largest, most knowledge-rich non-reasoning model, tuned for warmth, broad world knowledge and far fewer hallucinations rather than step-by-step reasoning.',
+   notable:'Prioritised EQ and factual accuracy; later retired.',
+   b:[['MMLU',90.0],['GPQA Diamond',71.4],['AIME 2024',36.7]]},
+
+  {id:'gemini25', name:'Gemini 2.5 Pro', dev:'google', date:'2025-03-25', sig:3,
+   tags:['Reasoning','Multimodal'], ctx:'1M tokens', par:'—',
+   desc:'A "thinking" multimodal model that topped the LMArena leaderboard, combining strong reasoning and coding with Gemini\'s signature million-token context.',
+   notable:'Reasoning + long context; a coding and analysis powerhouse.',
+   b:[['GPQA Diamond',84.0],['AIME 2025',86.7],['SWE-bench Verified',63.8]]},
+
+  {id:'llama4', name:'Llama 4 Maverick', dev:'meta', date:'2025-04-05', sig:2,
+   tags:['Open weights','MoE','Multimodal'], ctx:'1M tokens', par:'400B (17B active)',
+   desc:'Meta\'s first mixture-of-experts, natively-multimodal Llama family (Scout / Maverick / Behemoth). Scout offers a staggering 10M-token context window.',
+   notable:'Open MoE with up to 10M-token context.',
+   b:[['MMLU-Pro',80.5],['GPQA Diamond',69.8]]},
+
+  {id:'qwen3', name:'Qwen3 235B', dev:'alibaba', date:'2025-04-28', sig:2,
+   tags:['Open weights','MoE','Hybrid'], ctx:'128K tokens', par:'235B (22B active)',
+   desc:'Alibaba\'s leading open family, with hybrid thinking / non-thinking modes, 119-language coverage and dense + MoE variants, all under Apache-2.0.',
+   notable:'A top open-weights family from China.',
+   b:[['GPQA Diamond',71.1],['AIME 2025',81.5],['LiveCodeBench',70.7]]},
+
+  {id:'claude4', name:'Claude Opus 4', dev:'anthropic', date:'2025-05-22', sig:3,
+   tags:['Hybrid reasoning','Agentic'], ctx:'200K tokens', par:'—',
+   desc:'The Claude 4 flagship, billed as the best coding model in the world, able to sustain agentic, multi-hour software tasks with extended thinking and tool use.',
+   notable:'State-of-the-art autonomous coding.',
+   b:[['SWE-bench Verified',72.5],['GPQA Diamond',79.6],['AIME 2025',75.5]]},
+
+  {id:'o3', name:'OpenAI o3', dev:'openai', date:'2025-04-16', sig:3,
+   tags:['Reasoning','Agentic'], ctx:'200K tokens', par:'—',
+   desc:'A next-generation reasoning model trained with reinforcement-learned chain-of-thought and native tool use, posting a dramatic jump on the ARC-AGI abstraction benchmark plus frontier science and coding. Launched alongside the smaller o4-mini.',
+   notable:'Pushed reasoning models toward agentic, tool-using problem solving.',
+   b:[['GPQA Diamond',87.7],['SWE-bench Verified',71.7],['AIME 2024',96.7]]},
+
+  {id:'magistral', name:'Magistral Medium', dev:'mistral', date:'2025-06-10', sig:1,
+   tags:['Reasoning','Multilingual'], ctx:'—', par:'—',
+   desc:'Mistral\'s first dedicated reasoning models, distinctive for chain-of-thought that stays in the user\'s own language. The open sibling, Magistral Small (24B, Apache-2.0), brings transparent reasoning to local hardware.',
+   notable:'Brought multilingual, open reasoning to the Mistral family.',
+   b:[['AIME 2024',73.6],['AIME 2024 (maj@64)',90.0]]},
+
+  {id:'grok4', name:'Grok 4', dev:'xai', date:'2025-07-09', sig:3,
+   tags:['Reasoning','Tool-using'], ctx:'256K tokens', par:'—',
+   desc:'xAI\'s reasoning flagship, trained with reinforcement learning at pre-training scale on the 200k-GPU Colossus cluster. It natively wields a code interpreter and live web/X search while it thinks; the "Heavy" variant runs several reasoning threads in parallel.',
+   notable:'First model to crack 50% on Humanity\'s Last Exam (with tools).',
+   b:[['Humanity\'s Last Exam',50.7],['USAMO 2025',61.9],['ARC-AGI-2',15.9]]},
+
+  {id:'gpt5', name:'GPT-5', dev:'openai', date:'2025-08-07', sig:3,
+   tags:['Reasoning','Multimodal','Router'], ctx:'400K tokens', par:'—',
+   desc:'Less a single model than a system: a fast model, a deeper "thinking" model, and a real-time router that chooses between them. Natively multimodal and tuned for fewer hallucinations, OpenAI billed it as offering "PhD-level" ability across tasks.',
+   notable:'Unified the model picker into one auto-routing system; "a step toward AGI".',
+   b:[['AIME 2025',94.6],['GPQA Diamond',85.7],['SWE-bench Verified',74.9],['Humanity\'s Last Exam',24.8]]},
+
+  {id:'deepseekv31', name:'DeepSeek-V3.1', dev:'deepseek', date:'2025-08-21', sig:2,
+   tags:['Open weights','Hybrid'], ctx:'128K tokens', par:'671B (37B active)',
+   desc:'DeepSeek\'s first hybrid model, switching between a fast mode and a "thinking" mode within one set of open, MIT-licensed weights, with large gains on agentic coding over V3.',
+   notable:'Folded reasoning into the open V-series; strong, cheap and open.',
+   b:[['MMLU-Pro',84.8],['GPQA Diamond',80.1],['AIME 2025',88.4],['SWE-bench Verified',66.0]]},
+
+  {id:'sonnet45', name:'Claude Sonnet 4.5', dev:'anthropic', date:'2025-09-29', sig:2,
+   tags:['Agentic','Coding'], ctx:'200K tokens', par:'—',
+   desc:'Tuned for long-horizon agents and computer use, it set a record on the OSWorld desktop-task benchmark and shipped with the Claude Agent SDK and a Claude-for-Chrome extension.',
+   notable:'"Best model for agents" — a big leap on real computer-use tasks.',
+   b:[['SWE-bench Verified',77.2],['OSWorld · computer use',61.4]]},
+
+  {id:'gemini3', name:'Gemini 3 Pro', dev:'google', date:'2025-11-18', sig:3,
+   tags:['Reasoning','Multimodal','MoE'], ctx:'1M tokens', par:'—',
+   desc:'The first Gemini Pro built on a sparse mixture-of-experts, fusing deep "thinking" with native multimodality. Its launch reportedly triggered a competitive "code red" at OpenAI, and a Deep Think mode pushed reasoning further still.',
+   notable:'Reset the multimodal frontier and topped the leaderboards.',
+   b:[['GPQA Diamond',91.9],['SWE-bench Verified',76.2],['Humanity\'s Last Exam',37.5],['ARC-AGI-2',31.1]]},
+
+  {id:'opus45', name:'Claude Opus 4.5', dev:'anthropic', date:'2025-11-24', sig:3,
+   tags:['Agentic','Coding','Aligned'], ctx:'200K tokens', par:'—',
+   desc:'Anthropic\'s most capable and, it claimed, best-aligned model — the first to clear 80% on SWE-bench Verified. A new "effort" control lets developers trade compute for accuracy, while prices fell sharply versus Opus 4.',
+   notable:'First model past 80% on SWE-bench Verified; a top agentic coder.',
+   b:[['SWE-bench Verified',80.9],['GPQA Diamond',87.0]]},
+
+  {id:'deepseekv4', name:'DeepSeek-V4', dev:'deepseek', date:'2026-04-24', sig:2,
+   tags:['Open weights','MoE','Frontier'], ctx:'1M tokens', par:'1.6T (V4-Pro)',
+   desc:'A preview of DeepSeek\'s fourth generation, scaling to a 1.6-trillion-parameter "Pro" model and a leaner 284B "Flash" — both MIT-licensed with a million-token context, and quickly adopted by Chinese silicon vendors.',
+   notable:'Pushed open weights to trillion-parameter, 1M-context scale.',
+   b:[], emerging:true},
+
+  {id:'opus48', name:'Claude Opus 4.8', dev:'anthropic', date:'2026-05-28', sig:3,
+   tags:['Agentic','Frontier','Current'], ctx:'1M tokens', par:'—',
+   desc:'The current Claude flagship, extending Opus to a million-token context with adaptive "thinking" and multi-agent teamwork. It sits at today\'s frontier of autonomous, long-horizon work — where this star map reaches the present.',
+   notable:'The present-day apex of the Claude line — the edge of "now".',
+   b:[], emerging:true}
+];
+
+/* ============================================================
+   SETUP / GEOMETRY
+   ============================================================ */
+const cv = document.getElementById('stage');
+const ctx = cv.getContext('2d');
+let W=0,H=0,DPR=Math.min(window.devicePixelRatio||1,2);
+
+const T_MIN = Date.UTC(2018,0,1);
+const T_MAX = Date.UTC(2026,6,1);
+const WORLD_W = 5200;
+const LANE = 86;                 // vertical spacing unit
+const tval = d => Date.parse(d);
+const dateToX = d => ((tval(d)-T_MIN)/(T_MAX-T_MIN))*WORLD_W - WORLD_W/2;
+
+// assign non-overlapping vertical lanes (timeline scatter, alternating up/down)
+(function layout(){
+  const sorted=[...MODELS].sort((a,b)=>tval(a.date)-tval(b.date));
+  const placed=[];
+  const offs=[0,1,-1,2,-2,3,-3,4,-4,5,-5];
+  for(const m of sorted){
+    m.x=dateToX(m.date);
+    let chosen=0;
+    for(const o of offs){
+      const y=o*LANE;
+      let ok=true;
+      for(const p of placed){
+        if(Math.abs(p.x-m.x)<150 && Math.abs(p.y-y)<LANE*0.9){ok=false;break;}
+      }
+      if(ok){chosen=y;break;}
+    }
+    m.y=chosen;
+    placed.push(m);
+  }
+})();
+
+/* ---------- Camera (smoothed) ---------- */
+const cam={x:0,y:0,z:1}, tcam={x:0,y:0,z:1};
+function fitZoom(){
+  let minX=1e9,maxX=-1e9,minY=1e9,maxY=-1e9;
+  for(const m of MODELS){minX=Math.min(minX,m.x);maxX=Math.max(maxX,m.x);
+    minY=Math.min(minY,m.y);maxY=Math.max(maxY,m.y);}
+  const pad=260;
+  const zx=W/((maxX-minX)+pad*2), zy=H/((maxY-minY)+pad*2.4);
+  return {z:Math.min(zx,zy), cx:(minX+maxX)/2, cy:(minY+maxY)/2};
+}
+let MINZ=0.18, MAXZ=4.5;
+function resetView(animate=true){
+  const f=fitZoom();
+  MINZ=f.z*0.85;
+  setCam(f.cx,f.cy,f.z*0.96,animate);
+}
+function setCam(x,y,z,animate=true){
+  z=Math.max(MINZ,Math.min(MAXZ,z));
+  tcam.x=x;tcam.y=y;tcam.z=z;
+  if(!animate){cam.x=x;cam.y=y;cam.z=z;}
+}
+const worldToScreen=(wx,wy)=>({x:(wx-cam.x)*cam.z+W/2, y:(wy-cam.y)*cam.z+H/2});
+const screenToWorld=(sx,sy)=>({x:(sx-W/2)/cam.z+cam.x, y:(sy-H/2)/cam.z+cam.y});
+
+/* ============================================================
+   STARFIELD + NEBULA
+   ============================================================ */
+let STAR_LAYERS=[], neb;
+function buildStars(){
+  STAR_LAYERS=[
+    {p:0.18,stars:makeStars(220,0.6,1.2,0.35)},
+    {p:0.40,stars:makeStars(150,0.8,1.7,0.6)},
+    {p:0.75,stars:makeStars(90,1.1,2.4,0.95)}
+  ];
+}
+function makeStars(n,rmin,rmax,bright){
+  const a=[];
+  for(let i=0;i<n;i++){
+    a.push({x:Math.random(),y:Math.random(),
+      r:rmin+Math.random()*(rmax-rmin),
+      b:bright*(0.5+Math.random()*0.5),
+      tw:Math.random()*6.28, ts:0.4+Math.random()*1.6,
+      hue:Math.random()<0.18? (Math.random()<0.5?'#ffd9a8':'#bcd2ff'):'#ffffff'});
+  }
+  return a;
+}
+function buildNebula(){
+  neb=document.createElement('canvas');
+  neb.width=W; neb.height=H;
+  const g=neb.getContext('2d');
+  const blobs=[
+    {x:.18,y:.30,r:.55,c:'80,40,200'},
+    {x:.78,y:.22,r:.5,c:'220,40,140'},
+    {x:.62,y:.78,r:.6,c:'30,120,220'},
+    {x:.30,y:.80,r:.45,c:'250,120,40'},
+    {x:.50,y:.45,r:.7,c:'60,30,150'}
+  ];
+  for(const b of blobs){
+    const cx=b.x*W, cy=b.y*H, rad=b.r*Math.max(W,H);
+    const rg=g.createRadialGradient(cx,cy,0,cx,cy,rad);
+    rg.addColorStop(0,`rgba(${b.c},0.16)`);
+    rg.addColorStop(.4,`rgba(${b.c},0.07)`);
+    rg.addColorStop(1,'rgba(0,0,0,0)');
+    g.fillStyle=rg; g.fillRect(0,0,W,H);
+  }
+}
+
+/* ---------- shooting stars ---------- */
+let shooters=[];
+function maybeShoot(t){
+  if(Math.random()<0.004 && shooters.length<3){
+    const edge=Math.random();
+    shooters.push({x:Math.random()*W,y:Math.random()*H*0.5,
+      vx:(3+Math.random()*4), vy:(1.4+Math.random()*1.6),
+      len:80+Math.random()*120, life:1});
+  }
+  for(const s of shooters){s.x+=s.vx*4;s.y+=s.vy*4;s.life-=0.012;}
+  shooters=shooters.filter(s=>s.life>0);
+}
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+let hovered=null, selected=null, devFilter=new Set();
+let hint=document.getElementById('hint'), hintGone=false;
+
+function resize(){
+  W=window.innerWidth; H=window.innerHeight;
+  cv.width=W*DPR; cv.height=H*DPR; cv.style.width=W+'px'; cv.style.height=H+'px';
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  buildNebula();
+  if(!STAR_LAYERS.length) buildStars();
+}
+
+function drawBackground(t){
+  // base gradient
+  const bg=ctx.createRadialGradient(W*0.5,H*0.42,0,W*0.5,H*0.42,Math.max(W,H)*0.85);
+  bg.addColorStop(0,'#0b0a24'); bg.addColorStop(0.55,'#070617'); bg.addColorStop(1,'#030208');
+  ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
+
+  // nebula with gentle parallax + drift
+  if(neb){
+    const dx=(-cam.x*0.04)%W, dy=(-cam.y*0.04)%H;
+    const fx=Math.sin(t*0.00004)*16, fy=Math.cos(t*0.00003)*12;
+    ctx.globalCompositeOperation='lighter';
+    for(let ix=-1;ix<=1;ix++)for(let iy=-1;iy<=1;iy++){
+      ctx.drawImage(neb,((dx+fx)%W)+ix*W,((dy+fy)%H)+iy*H,W,H);
+    }
+    ctx.globalCompositeOperation='source-over';
+  }
+
+  // parallax starfield (tiled)
+  for(const layer of STAR_LAYERS){
+    const off=0.6+layer.p*0.6*Math.min(cam.z/1.5,1.4);
+    let sx=(-cam.x*layer.p*cam.z)%W; if(sx<0)sx+=W;
+    let sy=(-cam.y*layer.p*cam.z)%H; if(sy<0)sy+=H;
+    for(const st of layer.stars){
+      const tw=0.55+0.45*Math.sin(t*0.001*st.ts+st.tw);
+      let px=(st.x*W+sx)%W, py=(st.y*H+sy)%H;
+      const r=st.r*off, a=st.b*tw;
+      ctx.globalAlpha=Math.min(a,1);
+      ctx.fillStyle=st.hue;
+      ctx.beginPath(); ctx.arc(px,py,r,0,6.2832); ctx.fill();
+      if(st.r>1.6){ // soft glow for brighter stars
+        ctx.globalAlpha=a*0.25;
+        ctx.beginPath(); ctx.arc(px,py,r*3,0,6.2832); ctx.fill();
+      }
+    }
+  }
+  ctx.globalAlpha=1;
+
+  // shooting stars
+  for(const s of shooters){
+    const g=ctx.createLinearGradient(s.x,s.y,s.x-s.vx*s.len/4,s.y-s.vy*s.len/4);
+    g.addColorStop(0,`rgba(255,255,255,${s.life})`); g.addColorStop(1,'rgba(255,255,255,0)');
+    ctx.strokeStyle=g; ctx.lineWidth=2; ctx.beginPath();
+    ctx.moveTo(s.x,s.y); ctx.lineTo(s.x-s.vx*s.len/4,s.y-s.vy*s.len/4); ctx.stroke();
+  }
+}
+
+function drawSpine(t){
+  // wavy luminous timeline through y=0
+  const steps=120, pts=[];
+  for(let i=0;i<=steps;i++){
+    const wx=-WORLD_W/2 + (WORLD_W*1.04)*(i/steps);
+    const wy=Math.sin(wx*0.0016+t*0.0002)*14;
+    pts.push(worldToScreen(wx,wy));
+  }
+  // glow pass
+  const grad=ctx.createLinearGradient(0,0,W,0);
+  grad.addColorStop(0,'#3aa0ff'); grad.addColorStop(.4,'#9b6bff');
+  grad.addColorStop(.7,'#ff6bc4'); grad.addColorStop(1,'#ffb24d');
+  ctx.lineCap='round'; ctx.lineJoin='round';
+  ctx.strokeStyle=grad;
+  ctx.globalAlpha=0.18; ctx.lineWidth=14; stroke(pts);
+  ctx.globalAlpha=0.85; ctx.lineWidth=2; stroke(pts);
+  ctx.globalAlpha=1;
+
+  // year ticks
+  ctx.textAlign='center'; ctx.textBaseline='top';
+  for(let y=2018;y<=2026;y++){
+    const wx=dateToX(y+'-01-01');
+    const s=worldToScreen(wx, 0);
+    if(s.x<-40||s.x>W+40) continue;
+    ctx.strokeStyle='rgba(150,160,235,0.16)'; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(s.x,40); ctx.lineTo(s.x,H-40); ctx.stroke();
+    ctx.fillStyle='rgba(180,188,235,0.5)';
+    ctx.font='600 '+Math.max(11,12*Math.min(cam.z,1.4))+'px '+getFont();
+    ctx.fillText(y, s.x, worldToScreen(wx,LANE*4.4).y);
+  }
+}
+function stroke(pts){ctx.beginPath();ctx.moveTo(pts[0].x,pts[0].y);for(let i=1;i<pts.length;i++)ctx.lineTo(pts[i].x,pts[i].y);ctx.stroke();}
+function getFont(){return getComputedStyle(document.body).fontFamily;}
+
+function nodeRadius(m){
+  const base=m.sig===3?7:m.sig===2?5.4:4.2;
+  return Math.max(2.6, Math.min(46, base*cam.z));
+}
+function isDim(m){return devFilter.size>0 && !devFilter.has(m.dev);}
+
+function drawNodes(t){
+  for(const m of MODELS){
+    const s=worldToScreen(m.x,m.y);
+    if(s.x<-120||s.x>W+120||s.y<-120||s.y>H+120) {m._sx=null;continue;}
+    m._sx=s.x; m._sy=s.y;
+    const col=DEVS[m.dev].color;
+    const dim=isDim(m);
+    const isHov=hovered===m, isSel=selected===m;
+    const r=nodeRadius(m)*(isHov||isSel?1.35:1);
+    const pulse=0.5+0.5*Math.sin(t*0.0018+m.x*0.01);
+    const baseA=dim?0.18:1;
+
+    // connector to spine
+    const spineY=worldToScreen(m.x,Math.sin(m.x*0.0016+t*0.0002)*14).y;
+    ctx.globalAlpha=baseA*0.25;
+    ctx.strokeStyle=col; ctx.lineWidth=1;
+    ctx.beginPath(); ctx.moveTo(s.x,s.y); ctx.lineTo(s.x,spineY); ctx.stroke();
+
+    // outer glow
+    const gl=ctx.createRadialGradient(s.x,s.y,0,s.x,s.y,r*(isHov||isSel?6:4.2));
+    gl.addColorStop(0,hex(col,baseA*(0.55+0.2*pulse)));
+    gl.addColorStop(0.4,hex(col,baseA*0.22));
+    gl.addColorStop(1,hex(col,0));
+    ctx.globalAlpha=1; ctx.fillStyle=gl;
+    ctx.beginPath(); ctx.arc(s.x,s.y,r*(isHov||isSel?6:4.2),0,6.2832); ctx.fill();
+
+    // selection ring
+    if(isSel||isHov){
+      ctx.globalAlpha=baseA;
+      ctx.strokeStyle=hex(col,0.9); ctx.lineWidth=1.5;
+      ctx.beginPath(); ctx.arc(s.x,s.y,r+6+2*pulse,0,6.2832); ctx.stroke();
+    }
+
+    // core
+    ctx.globalAlpha=baseA;
+    const core=ctx.createRadialGradient(s.x-r*0.3,s.y-r*0.3,0,s.x,s.y,r);
+    core.addColorStop(0,'#ffffff'); core.addColorStop(0.4,col); core.addColorStop(1,hex(col,0.85));
+    ctx.fillStyle=core;
+    ctx.beginPath(); ctx.arc(s.x,s.y,r,0,6.2832); ctx.fill();
+
+    // label
+    const showLabel = !dim && (isHov||isSel || cam.z>0.6 || (m.sig===3 && cam.z>0.32));
+    if(showLabel){
+      ctx.globalAlpha=dim?0.3:(isHov||isSel?1:0.82);
+      ctx.fillStyle= isHov||isSel? '#ffffff':'#c9cef0';
+      ctx.font=(isHov||isSel?'700 ':'600 ')+Math.max(11,Math.min(16,13*cam.z))+'px '+getFont();
+      ctx.textAlign='center';
+      ctx.textBaseline = m.y>=0?'top':'bottom';
+      ctx.fillText(m.name, s.x, m.y>=0? s.y+r+7 : s.y-r-7);
+    }
+    ctx.globalAlpha=1;
+  }
+}
+
+function hex(c,a){
+  const n=parseInt(c.slice(1),16);
+  return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`;
+}
+
+/* ---------- main loop ---------- */
+function frame(t){
+  // smooth camera
+  cam.x+=(tcam.x-cam.x)*0.14;
+  cam.y+=(tcam.y-cam.y)*0.14;
+  cam.z+=(tcam.z-cam.z)*0.14;
+  maybeShoot(t);
+  drawBackground(t);
+  drawSpine(t);
+  drawNodes(t);
+  requestAnimationFrame(frame);
+}
+
+/* ============================================================
+   INTERACTION
+   ============================================================ */
+let down=false,moved=false,lastX=0,lastY=0,downX=0,downY=0;
+const tip=document.getElementById('tip');
+
+function pickNode(mx,my){
+  let best=null,bd=22;
+  for(const m of MODELS){
+    if(m._sx==null||isDim(m))continue;
+    const d=Math.hypot(m._sx-mx,m._sy-my);
+    const r=nodeRadius(m)+10;
+    if(d<Math.max(r,bd) && d<bd){bd=d;best=m;}
+    else if(d<r){best=m;bd=Math.min(bd,d);}
+  }
+  return best;
+}
+
+cv.addEventListener('mousedown',e=>{down=true;moved=false;lastX=downX=e.clientX;lastY=downY=e.clientY;cv.classList.add('dragging');});
+window.addEventListener('mouseup',e=>{
+  cv.classList.remove('dragging');
+  if(down && !moved){
+    const m=pickNode(e.clientX,e.clientY);
+    if(m) openPanel(m); else if(!e.target.closest('#panel,.topbar,.legend,.controls')) closePanel();
+  }
+  down=false;
+});
+window.addEventListener('mousemove',e=>{
+  if(down){
+    const dx=e.clientX-lastX, dy=e.clientY-lastY;
+    if(Math.abs(e.clientX-downX)+Math.abs(e.clientY-downY)>4) moved=true;
+    tcam.x-=dx/cam.z; tcam.y-=dy/cam.z; cam.x-=dx/cam.z; cam.y-=dy/cam.z;
+    lastX=e.clientX; lastY=e.clientY;
+    hideHint();
+  } else {
+    const m=pickNode(e.clientX,e.clientY);
+    hovered=m;
+    cv.style.cursor=m?'pointer':'grab';
+    if(m){
+      tip.querySelector('.n').textContent=m.name;
+      tip.querySelector('.d').textContent=DEVS[m.dev].name+' · '+fmtDate(m.date);
+      tip.style.left=Math.min(e.clientX+16,W-220)+'px';
+      tip.style.top=(e.clientY+16)+'px';
+      tip.style.opacity=1;
+    } else tip.style.opacity=0;
+  }
+});
+
+cv.addEventListener('wheel',e=>{
+  e.preventDefault();
+  hideHint();
+  const before=screenToWorld(e.clientX,e.clientY);
+  const factor=Math.exp(-e.deltaY*0.0014);
+  let nz=Math.max(MINZ,Math.min(MAXZ,tcam.z*factor));
+  tcam.z=nz;
+  // keep cursor anchored (using target zoom)
+  tcam.x=before.x-(e.clientX-W/2)/nz;
+  tcam.y=before.y-(e.clientY-H/2)/nz;
+},{passive:false});
+
+// touch
+let touchMode=null,pinchD=0,pinchMid=null;
+cv.addEventListener('touchstart',e=>{
+  if(e.touches.length===1){touchMode='pan';lastX=downX=e.touches[0].clientX;lastY=downY=e.touches[0].clientY;moved=false;}
+  else if(e.touches.length===2){touchMode='pinch';pinchD=tdist(e);pinchMid=tmid(e);}
+},{passive:false});
+cv.addEventListener('touchmove',e=>{
+  e.preventDefault();hideHint();
+  if(touchMode==='pan'&&e.touches.length===1){
+    const dx=e.touches[0].clientX-lastX,dy=e.touches[0].clientY-lastY;
+    if(Math.abs(e.touches[0].clientX-downX)+Math.abs(e.touches[0].clientY-downY)>4)moved=true;
+    tcam.x-=dx/cam.z;tcam.y-=dy/cam.z;cam.x-=dx/cam.z;cam.y-=dy/cam.z;
+    lastX=e.touches[0].clientX;lastY=e.touches[0].clientY;
+  } else if(touchMode==='pinch'&&e.touches.length===2){
+    const nd=tdist(e),mid=tmid(e);
+    const before=screenToWorld(mid.x,mid.y);
+    let nz=Math.max(MINZ,Math.min(MAXZ,tcam.z*(nd/pinchD)));
+    tcam.z=nz;cam.z=nz;
+    tcam.x=before.x-(mid.x-W/2)/nz;tcam.y=before.y-(mid.y-H/2)/nz;
+    cam.x=tcam.x;cam.y=tcam.y;
+    pinchD=nd;
+  }
+},{passive:false});
+cv.addEventListener('touchend',e=>{
+  if(touchMode==='pan'&&!moved&&e.changedTouches.length){
+    const m=pickNode(e.changedTouches[0].clientX,e.changedTouches[0].clientY);
+    if(m)openPanel(m);
+  }
+  touchMode=null;
+});
+const tdist=e=>Math.hypot(e.touches[0].clientX-e.touches[1].clientX,e.touches[0].clientY-e.touches[1].clientY);
+const tmid=e=>({x:(e.touches[0].clientX+e.touches[1].clientX)/2,y:(e.touches[0].clientY+e.touches[1].clientY)/2});
+
+function hideHint(){if(!hintGone){hintGone=true;hint.classList.add('gone');}}
+
+/* ============================================================
+   PANEL
+   ============================================================ */
+function fmtDate(d){return new Date(d).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric',timeZone:'UTC'});}
+const P={dev:'pdev',name:'pname',date:'pdate',tags:'ptags',desc:'pdesc',facts:'pfacts',bench:'pbench',note:'pnote'};
+const $=id=>document.getElementById(id);
+
+function flyTo(m){
+  const z=Math.max(1.5,cam.z);
+  setCam(m.x,m.y,z,true);
+}
+function openPanel(m){
+  selected=m;
+  const col=DEVS[m.dev].color;
+  $('pglow').style.background='radial-gradient(circle,'+col+' 0%,transparent 70%)';
+  document.querySelector('.p-dev .dot').style.color=col;
+  $('pdev').textContent=DEVS[m.dev].name;
+  $('pname').textContent=m.name;
+  $('pdate').textContent=fmtDate(m.date);
+  $('ptags').innerHTML=m.tags.map(t=>`<span class="tag">${t}</span>`).join('');
+  $('pdesc').textContent=m.desc;
+  $('pfacts').innerHTML=
+    fact('Released',fmtDate(m.date))+
+    fact('Developer',DEVS[m.dev].name)+
+    fact('Context window',m.ctx)+
+    fact('Parameters',m.par);
+  // benchmarks
+  if(m.b && m.b.length){
+    $('pbench').innerHTML=m.b.map((bb,i)=>{
+      return `<div class="bench"><div class="top"><span class="lab">${bb[0]}</span>`+
+        `<span class="val" style="color:${col}">${bb[1]}%</span></div>`+
+        `<div class="track"><div class="fill" data-w="${bb[1]}" style="background:linear-gradient(90deg,${hex(col,.7)},${col})"></div></div></div>`;
+    }).join('');
+    requestAnimationFrame(()=>{requestAnimationFrame(()=>{
+      document.querySelectorAll('#pbench .fill').forEach(f=>f.style.width=f.dataset.w+'%');
+    });});
+  } else {
+    $('pbench').innerHTML=`<div class="nobench">${m.emerging
+      ? 'A brand-new frontier model — standardised, independently-verified benchmark scores are still emerging and not yet comparable across labs. Its headline is sheer scale, context length and agentic capability.'
+      : 'Standardised LLM benchmarks such as MMLU and GPQA postdate this model, so directly comparable scores aren\'t available. Its impact is best measured by the architecture and ideas it introduced.'}</div>`;
+  }
+  $('pnote').innerHTML='<strong>Why it mattered:</strong> '+m.notable+'<br><br>Benchmark figures are as reported by the model\'s developer or public leaderboards (Artificial Analysis, Papers with Code). Evaluation setups (shots, chain-of-thought, tooling) vary between models, so treat cross-model comparisons as indicative.';
+  document.getElementById('panel').classList.add('open');
+  flyTo(m);
+}
+function fact(k,v){return `<div class="fact"><div class="k">${k}</div><div class="v">${v||'—'}</div></div>`;}
+function closePanel(){document.getElementById('panel').classList.remove('open');selected=null;}
+$('pclose').onclick=closePanel;
+
+// prev/next by date
+const byDate=[...MODELS].sort((a,b)=>tval(a.date)-tval(b.date));
+$('pprev').onclick=()=>{if(!selected)return;const i=byDate.indexOf(selected);if(i>0)openPanel(byDate[i-1]);};
+$('pnext').onclick=()=>{if(!selected)return;const i=byDate.indexOf(selected);if(i<byDate.length-1)openPanel(byDate[i+1]);};
+window.addEventListener('keydown',e=>{
+  if(e.key==='Escape')closePanel();
+  if(selected){
+    if(e.key==='ArrowLeft')$('pprev').click();
+    if(e.key==='ArrowRight')$('pnext').click();
+  }
+});
+
+/* ============================================================
+   LEGEND / SEARCH / CONTROLS
+   ============================================================ */
+const legend=document.getElementById('legend');
+for(const [k,d] of Object.entries(DEVS)){
+  const row=document.createElement('div');
+  row.className='row'; row.dataset.dev=k;
+  row.innerHTML=`<span class="sw" style="color:${d.color}"></span>${d.name}`;
+  row.onclick=()=>{
+    if(devFilter.has(k)) devFilter.delete(k); else {
+      // toggle: if clicking and it's the only behavior, treat as filter set
+      devFilter.add(k);
+    }
+    // if all selected, clear
+    syncLegend();
+  };
+  legend.appendChild(row);
+}
+function syncLegend(){
+  document.querySelectorAll('.legend .row').forEach(r=>{
+    r.classList.toggle('off', devFilter.size>0 && !devFilter.has(r.dataset.dev));
+  });
+}
+
+const search=document.getElementById('search'), results=document.getElementById('results');
+search.addEventListener('input',()=>{
+  const q=search.value.trim().toLowerCase();
+  if(!q){results.classList.remove('show');return;}
+  const hits=MODELS.filter(m=>m.name.toLowerCase().includes(q)||DEVS[m.dev].name.toLowerCase().includes(q))
+    .sort((a,b)=>tval(a.date)-tval(b.date)).slice(0,8);
+  results.innerHTML=hits.map(m=>`<div class="result" data-id="${m.id}">
+    <span class="dot" style="color:${DEVS[m.dev].color}"></span>${m.name}
+    <span class="yr">${new Date(m.date).getUTCFullYear()}</span></div>`).join('')
+    ||`<div class="result" style="color:#777">No matches</div>`;
+  results.classList.add('show');
+});
+results.addEventListener('click',e=>{
+  const el=e.target.closest('.result'); if(!el||!el.dataset.id)return;
+  const m=MODELS.find(x=>x.id===el.dataset.id);
+  results.classList.remove('show'); search.value='';
+  openPanel(m);
+});
+document.addEventListener('click',e=>{if(!e.target.closest('.search-wrap'))results.classList.remove('show');});
+
+$('zin').onclick=()=>setCam(tcam.x,tcam.y,tcam.z*1.5);
+$('zout').onclick=()=>setCam(tcam.x,tcam.y,tcam.z/1.5);
+$('reset').onclick=()=>{closePanel();devFilter.clear();syncLegend();resetView();};
+
+/* ============================================================
+   BOOT
+   ============================================================ */
+window.addEventListener('resize',()=>{resize();resetView(false);});
+resize();
+resetView(false);
+// gentle intro zoom-in
+cam.z=MINZ*0.7; tcam.z=fitZoom().z*0.96; tcam.z=Math.max(MINZ,tcam.z);
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
